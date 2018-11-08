@@ -1,0 +1,170 @@
+{
+  "definitions": {
+    "CatalogService": {
+      "kind": "service",
+      "@source": "srv/service.cds"
+    },
+    "CatalogService.Menu": {
+      "kind": "entity",
+      "source": "my.restaurant.T_0010",
+      "elements": {
+        "ShopID": {
+          "origin": "my.restaurant.T_0010..ShopID",
+          "indexNo": 1,
+          "value": {
+            "=": "T_0010.ShopID"
+          },
+          "key": true,
+          "type": "cds.String",
+          "@cds.persistence.name": "SHOPID"
+        },
+        "Corner": {
+          "origin": "my.restaurant.T_0010..Corner",
+          "indexNo": 2,
+          "value": {
+            "=": "T_0010.Corner"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "CORNER"
+        },
+        "Date": {
+          "origin": "my.restaurant.T_0010..Date",
+          "indexNo": 3,
+          "value": {
+            "=": "T_0010.Date"
+          },
+          "type": "cds.DateTime",
+          "@cds.persistence.name": "DATE"
+        },
+        "DiningType": {
+          "origin": "my.restaurant.T_0010..DiningType",
+          "indexNo": 4,
+          "value": {
+            "=": "T_0010.DiningType"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "DININGTYPE"
+        },
+        "MainTitle": {
+          "origin": "my.restaurant.T_0010..MainTitle",
+          "indexNo": 5,
+          "value": {
+            "=": "T_0010.MainTitle"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "MAINTITLE"
+        },
+        "SideDish": {
+          "origin": "my.restaurant.T_0010..SideDish",
+          "indexNo": 6,
+          "value": {
+            "=": "T_0010.SideDish"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "SIDEDISH"
+        },
+        "Calories": {
+          "origin": "my.restaurant.T_0010..Calories",
+          "indexNo": 7,
+          "value": {
+            "=": "T_0010.Calories"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "CALORIES"
+        }
+      },
+      "@cds.persistence.name": "CATALOGSERVICE_MENU"
+    },
+    "my.restaurant.M_0010": {
+      "kind": "entity",
+      "elements": {
+        "ShopID": {
+          "key": true,
+          "indexNo": 1,
+          "type": "cds.String",
+          "@cds.persistence.name": "SHOPID"
+        },
+        "Title": {
+          "indexNo": 2,
+          "type": "cds.String",
+          "@cds.persistence.name": "TITLE"
+        },
+        "AreaName": {
+          "indexNo": 3,
+          "type": "cds.String",
+          "@cds.persistence.name": "AREANAME"
+        },
+        "SubAreaName": {
+          "indexNo": 4,
+          "type": "cds.String",
+          "@cds.persistence.name": "SUBAREANAME"
+        }
+      },
+      "@cds.persistence.name": "MY_RESTAURANT_M_0010"
+    },
+    "my.restaurant.M_0020": {
+      "kind": "entity",
+      "elements": {
+        "DiningType": {
+          "key": true,
+          "indexNo": 1,
+          "type": "cds.String",
+          "@cds.persistence.name": "DININGTYPE"
+        },
+        "Title": {
+          "indexNo": 2,
+          "type": "cds.String",
+          "@cds.persistence.name": "TITLE"
+        }
+      },
+      "@cds.persistence.name": "MY_RESTAURANT_M_0020"
+    },
+    "my.restaurant.T_0010": {
+      "kind": "entity",
+      "elements": {
+        "ShopID": {
+          "key": true,
+          "indexNo": 1,
+          "type": "cds.String",
+          "@cds.persistence.name": "SHOPID"
+        },
+        "Corner": {
+          "indexNo": 2,
+          "type": "cds.String",
+          "@cds.persistence.name": "CORNER"
+        },
+        "Date": {
+          "indexNo": 3,
+          "type": "cds.DateTime",
+          "@cds.persistence.name": "DATE"
+        },
+        "DiningType": {
+          "indexNo": 4,
+          "type": "cds.String",
+          "@cds.persistence.name": "DININGTYPE"
+        },
+        "MainTitle": {
+          "indexNo": 5,
+          "type": "cds.String",
+          "@cds.persistence.name": "MAINTITLE"
+        },
+        "SideDish": {
+          "indexNo": 6,
+          "type": "cds.String",
+          "@cds.persistence.name": "SIDEDISH"
+        },
+        "Calories": {
+          "indexNo": 7,
+          "type": "cds.String",
+          "@cds.persistence.name": "CALORIES"
+        }
+      },
+      "@cds.persistence.name": "MY_RESTAURANT_T_0010"
+    }
+  },
+  "version": {
+    "creator": "CDS Compiler v1.1.3",
+    "csn": "0.1.0"
+  },
+  "@sql_mapping": "plain"
+}

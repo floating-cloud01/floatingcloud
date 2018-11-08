@@ -1,0 +1,42 @@
+ID: MyCorpDining
+_schema-version: '2.1'
+version: 0.0.1
+modules:
+  - name: MyCorpDining-db
+    type: hdb
+    path: db
+    parameters:
+      memory: 256M
+      disk-quota: 256M
+    requires:
+      - name: MyCorpDining-hdi-container
+  - name: MyCorpDining-srv
+    type: java
+    path: srv
+    parameters:
+      memory: 1024M
+      disk-quota: 256M
+    provides:
+      - name: srv_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: MyCorpDining-hdi-container
+        properties:
+          JBP_CONFIG_RESOURCE_CONFIGURATION: >-
+            [tomcat/webapps/ROOT/META-INF/context.xml:
+            {"service_name_for_DefaultDB" : "~{hdi-container-name}"}]
+
+  - name: floatingcloud
+    type: nodejs
+    path: floatingcloud
+    provides:
+     - name: floatingcloud_api
+       properties:
+          url: ${default-url}
+
+resources:
+  - name: MyCorpDining-hdi-container
+    properties:
+      hdi-container-name: '${service-name}'
+    type: com.sap.xs.hdi-container
