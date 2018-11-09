@@ -4,6 +4,76 @@
       "kind": "service",
       "@source": "srv/service.cds"
     },
+    "CatalogService.Cafeteria": {
+      "kind": "entity",
+      "source": "my.restaurant.M_0010",
+      "elements": {
+        "ShopID": {
+          "origin": "my.restaurant.M_0010..ShopID",
+          "indexNo": 1,
+          "value": {
+            "=": "M_0010.ShopID"
+          },
+          "key": true,
+          "type": "cds.String",
+          "@cds.persistence.name": "SHOPID"
+        },
+        "Title": {
+          "origin": "my.restaurant.M_0010..Title",
+          "indexNo": 2,
+          "value": {
+            "=": "M_0010.Title"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "TITLE"
+        },
+        "AreaName": {
+          "origin": "my.restaurant.M_0010..AreaName",
+          "indexNo": 3,
+          "value": {
+            "=": "M_0010.AreaName"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "AREANAME"
+        },
+        "SubAreaName": {
+          "origin": "my.restaurant.M_0010..SubAreaName",
+          "indexNo": 4,
+          "value": {
+            "=": "M_0010.SubAreaName"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "SUBAREANAME"
+        }
+      },
+      "@cds.persistence.name": "CATALOGSERVICE_CAFETERIA"
+    },
+    "CatalogService.MealType": {
+      "kind": "entity",
+      "source": "my.restaurant.M_0020",
+      "elements": {
+        "MealType": {
+          "origin": "my.restaurant.M_0020..MealType",
+          "indexNo": 1,
+          "value": {
+            "=": "M_0020.MealType"
+          },
+          "key": true,
+          "type": "cds.String",
+          "@cds.persistence.name": "MEALTYPE"
+        },
+        "Title": {
+          "origin": "my.restaurant.M_0020..Title",
+          "indexNo": 2,
+          "value": {
+            "=": "M_0020.Title"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "TITLE"
+        }
+      },
+      "@cds.persistence.name": "CATALOGSERVICE_MEALTYPE"
+    },
     "CatalogService.Menu": {
       "kind": "entity",
       "source": "my.restaurant.T_0010",
@@ -87,6 +157,32 @@
         }
       },
       "@cds.persistence.name": "CATALOGSERVICE_MENU"
+    },
+    "CatalogService.Bookmark": {
+      "kind": "entity",
+      "source": "my.restaurant.T_0020",
+      "elements": {
+        "UserKey": {
+          "origin": "my.restaurant.T_0020..UserKey",
+          "indexNo": 1,
+          "value": {
+            "=": "T_0020.UserKey"
+          },
+          "key": true,
+          "type": "cds.String",
+          "@cds.persistence.name": "USERKEY"
+        },
+        "ShopID": {
+          "origin": "my.restaurant.T_0020..ShopID",
+          "indexNo": 2,
+          "value": {
+            "=": "T_0020.ShopID"
+          },
+          "type": "cds.String",
+          "@cds.persistence.name": "SHOPID"
+        }
+      },
+      "@cds.persistence.name": "CATALOGSERVICE_BOOKMARK"
     },
     "my.restaurant.M_0010": {
       "kind": "entity",

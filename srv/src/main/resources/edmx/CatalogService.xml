@@ -3,8 +3,27 @@
   <edmx:DataServices m:DataServiceVersion="2.0">
     <Schema Namespace="CatalogService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
       <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Cafeteria" EntityType="CatalogService.Cafeteria"/>
+        <EntitySet Name="MealType" EntityType="CatalogService.MealType"/>
         <EntitySet Name="Menu" EntityType="CatalogService.Menu"/>
+        <EntitySet Name="Bookmark" EntityType="CatalogService.Bookmark"/>
       </EntityContainer>
+      <EntityType Name="Cafeteria">
+        <Key>
+          <PropertyRef Name="ShopID"/>
+        </Key>
+        <Property Name="ShopID" Type="Edm.String" Nullable="false"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="AreaName" Type="Edm.String"/>
+        <Property Name="SubAreaName" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="MealType">
+        <Key>
+          <PropertyRef Name="MealType"/>
+        </Key>
+        <Property Name="MealType" Type="Edm.String" Nullable="false"/>
+        <Property Name="Title" Type="Edm.String"/>
+      </EntityType>
       <EntityType Name="Menu">
         <Key>
           <PropertyRef Name="ShopID"/>
@@ -21,6 +40,13 @@
         <Property Name="SideDish" Type="Edm.String"/>
         <Property Name="Calories" Type="Edm.String"/>
         <Property Name="LikeIt" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="Bookmark">
+        <Key>
+          <PropertyRef Name="UserKey"/>
+        </Key>
+        <Property Name="UserKey" Type="Edm.String" Nullable="false"/>
+        <Property Name="ShopID" Type="Edm.String"/>
       </EntityType>
     </Schema>
   </edmx:DataServices>
