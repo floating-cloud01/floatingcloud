@@ -24,6 +24,7 @@
           "value": {
             "=": "T_0010.Corner"
           },
+          "key": true,
           "type": "cds.String",
           "@cds.persistence.name": "CORNER"
         },
@@ -33,17 +34,19 @@
           "value": {
             "=": "T_0010.Date"
           },
+          "key": true,
           "type": "cds.DateTime",
           "@cds.persistence.name": "DATE"
         },
-        "DiningType": {
-          "origin": "my.restaurant.T_0010..DiningType",
+        "MealType": {
+          "origin": "my.restaurant.T_0010..MealType",
           "indexNo": 4,
           "value": {
-            "=": "T_0010.DiningType"
+            "=": "T_0010.MealType"
           },
+          "key": true,
           "type": "cds.String",
-          "@cds.persistence.name": "DININGTYPE"
+          "@cds.persistence.name": "MEALTYPE"
         },
         "MainTitle": {
           "origin": "my.restaurant.T_0010..MainTitle",
@@ -51,6 +54,7 @@
           "value": {
             "=": "T_0010.MainTitle"
           },
+          "key": true,
           "type": "cds.String",
           "@cds.persistence.name": "MAINTITLE"
         },
@@ -71,6 +75,15 @@
           },
           "type": "cds.String",
           "@cds.persistence.name": "CALORIES"
+        },
+        "LikeIt": {
+          "origin": "my.restaurant.T_0010..LikeIt",
+          "indexNo": 8,
+          "value": {
+            "=": "T_0010.LikeIt"
+          },
+          "type": "cds.Integer",
+          "@cds.persistence.name": "LIKEIT"
         }
       },
       "@cds.persistence.name": "CATALOGSERVICE_MENU"
@@ -105,11 +118,11 @@
     "my.restaurant.M_0020": {
       "kind": "entity",
       "elements": {
-        "DiningType": {
+        "MealType": {
           "key": true,
           "indexNo": 1,
           "type": "cds.String",
-          "@cds.persistence.name": "DININGTYPE"
+          "@cds.persistence.name": "MEALTYPE"
         },
         "Title": {
           "indexNo": 2,
@@ -129,21 +142,25 @@
           "@cds.persistence.name": "SHOPID"
         },
         "Corner": {
+          "key": true,
           "indexNo": 2,
           "type": "cds.String",
           "@cds.persistence.name": "CORNER"
         },
         "Date": {
+          "key": true,
           "indexNo": 3,
           "type": "cds.DateTime",
           "@cds.persistence.name": "DATE"
         },
-        "DiningType": {
+        "MealType": {
+          "key": true,
           "indexNo": 4,
           "type": "cds.String",
-          "@cds.persistence.name": "DININGTYPE"
+          "@cds.persistence.name": "MEALTYPE"
         },
         "MainTitle": {
+          "key": true,
           "indexNo": 5,
           "type": "cds.String",
           "@cds.persistence.name": "MAINTITLE"
@@ -157,9 +174,31 @@
           "indexNo": 7,
           "type": "cds.String",
           "@cds.persistence.name": "CALORIES"
+        },
+        "LikeIt": {
+          "indexNo": 8,
+          "type": "cds.Integer",
+          "@cds.persistence.name": "LIKEIT"
         }
       },
       "@cds.persistence.name": "MY_RESTAURANT_T_0010"
+    },
+    "my.restaurant.T_0020": {
+      "kind": "entity",
+      "elements": {
+        "UserKey": {
+          "key": true,
+          "indexNo": 1,
+          "type": "cds.String",
+          "@cds.persistence.name": "USERKEY"
+        },
+        "ShopID": {
+          "indexNo": 2,
+          "type": "cds.String",
+          "@cds.persistence.name": "SHOPID"
+        }
+      },
+      "@cds.persistence.name": "MY_RESTAURANT_T_0020"
     }
   },
   "version": {

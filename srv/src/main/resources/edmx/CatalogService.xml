@@ -8,14 +8,19 @@
       <EntityType Name="Menu">
         <Key>
           <PropertyRef Name="ShopID"/>
+          <PropertyRef Name="Corner"/>
+          <PropertyRef Name="Date"/>
+          <PropertyRef Name="MealType"/>
+          <PropertyRef Name="MainTitle"/>
         </Key>
         <Property Name="ShopID" Type="Edm.String" Nullable="false"/>
-        <Property Name="Corner" Type="Edm.String"/>
-        <Property Name="Date" Type="Edm.DateTimeOffset"/>
-        <Property Name="DiningType" Type="Edm.String"/>
-        <Property Name="MainTitle" Type="Edm.String"/>
+        <Property Name="Corner" Type="Edm.String" Nullable="false"/>
+        <Property Name="Date" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="MealType" Type="Edm.String" Nullable="false"/>
+        <Property Name="MainTitle" Type="Edm.String" Nullable="false"/>
         <Property Name="SideDish" Type="Edm.String"/>
         <Property Name="Calories" Type="Edm.String"/>
+        <Property Name="LikeIt" Type="Edm.Int32"/>
       </EntityType>
     </Schema>
   </edmx:DataServices>
