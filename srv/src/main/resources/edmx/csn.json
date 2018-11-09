@@ -85,7 +85,18 @@
             "=": "T_0010.ShopID"
           },
           "key": true,
-          "type": "cds.String",
+          "type": "cds.Association",
+          "target": "CatalogService.Cafeteria",
+          "foreignKeys": {
+            "ShopID": {
+              "origin": "my.restaurant.T_0010..ShopID.ShopID",
+              "indexNo": 1,
+              "path": "ShopID",
+              "generatedFieldName": "ShopID_ShopID",
+              "@cds.persistence.name": "SHOPID"
+            }
+          },
+          "redirected": true,
           "@cds.persistence.name": "SHOPID"
         },
         "Corner": {
@@ -115,7 +126,18 @@
             "=": "T_0010.MealType"
           },
           "key": true,
-          "type": "cds.String",
+          "type": "cds.Association",
+          "target": "CatalogService.MealType",
+          "foreignKeys": {
+            "MealType": {
+              "origin": "my.restaurant.T_0010..MealType.MealType",
+              "indexNo": 1,
+              "path": "MealType",
+              "generatedFieldName": "MealType_MealType",
+              "@cds.persistence.name": "MEALTYPE"
+            }
+          },
+          "redirected": true,
           "@cds.persistence.name": "MEALTYPE"
         },
         "MainTitle": {
@@ -154,6 +176,26 @@
           },
           "type": "cds.Integer",
           "@cds.persistence.name": "LIKEIT"
+        },
+        "ShopID_ShopID": {
+          "type": "cds.String",
+          "key": true,
+          "value": {
+            "=": "T_0010.ShopID_ShopID"
+          },
+          "origin": "my.restaurant.T_0010..ShopID_ShopID",
+          "@odata.foreignKey4": "ShopID",
+          "@cds.persistence.name": "SHOPID_SHOPID"
+        },
+        "MealType_MealType": {
+          "type": "cds.String",
+          "key": true,
+          "value": {
+            "=": "T_0010.MealType_MealType"
+          },
+          "origin": "my.restaurant.T_0010..MealType_MealType",
+          "@odata.foreignKey4": "MealType",
+          "@cds.persistence.name": "MEALTYPE_MEALTYPE"
         }
       },
       "@cds.persistence.name": "CATALOGSERVICE_MENU"
@@ -178,8 +220,28 @@
           "value": {
             "=": "T_0020.ShopID"
           },
-          "type": "cds.String",
+          "type": "cds.Association",
+          "target": "CatalogService.Cafeteria",
+          "foreignKeys": {
+            "ShopID": {
+              "origin": "my.restaurant.T_0020..ShopID.ShopID",
+              "indexNo": 1,
+              "path": "ShopID",
+              "generatedFieldName": "ShopID_ShopID",
+              "@cds.persistence.name": "SHOPID"
+            }
+          },
+          "redirected": true,
           "@cds.persistence.name": "SHOPID"
+        },
+        "ShopID_ShopID": {
+          "type": "cds.String",
+          "value": {
+            "=": "T_0020.ShopID_ShopID"
+          },
+          "origin": "my.restaurant.T_0020..ShopID_ShopID",
+          "@odata.foreignKey4": "ShopID",
+          "@cds.persistence.name": "SHOPID_SHOPID"
         }
       },
       "@cds.persistence.name": "CATALOGSERVICE_BOOKMARK"
@@ -234,7 +296,16 @@
         "ShopID": {
           "key": true,
           "indexNo": 1,
-          "type": "cds.String",
+          "type": "cds.Association",
+          "target": "my.restaurant.M_0010",
+          "foreignKeys": {
+            "ShopID": {
+              "path": "ShopID",
+              "indexNo": 1,
+              "generatedFieldName": "ShopID_ShopID",
+              "@cds.persistence.name": "SHOPID"
+            }
+          },
           "@cds.persistence.name": "SHOPID"
         },
         "Corner": {
@@ -252,7 +323,16 @@
         "MealType": {
           "key": true,
           "indexNo": 4,
-          "type": "cds.String",
+          "type": "cds.Association",
+          "target": "my.restaurant.M_0020",
+          "foreignKeys": {
+            "MealType": {
+              "path": "MealType",
+              "indexNo": 1,
+              "generatedFieldName": "MealType_MealType",
+              "@cds.persistence.name": "MEALTYPE"
+            }
+          },
           "@cds.persistence.name": "MEALTYPE"
         },
         "MainTitle": {
@@ -275,6 +355,18 @@
           "indexNo": 8,
           "type": "cds.Integer",
           "@cds.persistence.name": "LIKEIT"
+        },
+        "ShopID_ShopID": {
+          "type": "cds.String",
+          "key": true,
+          "@odata.foreignKey4": "ShopID",
+          "@cds.persistence.name": "SHOPID_SHOPID"
+        },
+        "MealType_MealType": {
+          "type": "cds.String",
+          "key": true,
+          "@odata.foreignKey4": "MealType",
+          "@cds.persistence.name": "MEALTYPE_MEALTYPE"
         }
       },
       "@cds.persistence.name": "MY_RESTAURANT_T_0010"
@@ -290,8 +382,22 @@
         },
         "ShopID": {
           "indexNo": 2,
-          "type": "cds.String",
+          "type": "cds.Association",
+          "target": "my.restaurant.M_0010",
+          "foreignKeys": {
+            "ShopID": {
+              "path": "ShopID",
+              "indexNo": 1,
+              "generatedFieldName": "ShopID_ShopID",
+              "@cds.persistence.name": "SHOPID"
+            }
+          },
           "@cds.persistence.name": "SHOPID"
+        },
+        "ShopID_ShopID": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "ShopID",
+          "@cds.persistence.name": "SHOPID_SHOPID"
         }
       },
       "@cds.persistence.name": "MY_RESTAURANT_T_0020"

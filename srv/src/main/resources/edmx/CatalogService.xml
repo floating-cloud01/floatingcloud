@@ -7,6 +7,18 @@
         <EntitySet Name="MealType" EntityType="CatalogService.MealType"/>
         <EntitySet Name="Menu" EntityType="CatalogService.Menu"/>
         <EntitySet Name="Bookmark" EntityType="CatalogService.Bookmark"/>
+        <AssociationSet Name="Menu_ShopID" Association="CatalogService.Menu_ShopID">
+          <End Role="Menu" EntitySet="Menu"/>
+          <End Role="Cafeteria" EntitySet="Cafeteria"/>
+        </AssociationSet>
+        <AssociationSet Name="Menu_MealType" Association="CatalogService.Menu_MealType">
+          <End Role="Menu" EntitySet="Menu"/>
+          <End Role="MealType" EntitySet="MealType"/>
+        </AssociationSet>
+        <AssociationSet Name="Bookmark_ShopID" Association="CatalogService.Bookmark_ShopID">
+          <End Role="Bookmark" EntitySet="Bookmark"/>
+          <End Role="Cafeteria" EntitySet="Cafeteria"/>
+        </AssociationSet>
       </EntityContainer>
       <EntityType Name="Cafeteria">
         <Key>
@@ -26,28 +38,67 @@
       </EntityType>
       <EntityType Name="Menu">
         <Key>
-          <PropertyRef Name="ShopID"/>
           <PropertyRef Name="Corner"/>
           <PropertyRef Name="Date"/>
-          <PropertyRef Name="MealType"/>
           <PropertyRef Name="MainTitle"/>
+          <PropertyRef Name="ShopID_ShopID"/>
+          <PropertyRef Name="MealType_MealType"/>
         </Key>
-        <Property Name="ShopID" Type="Edm.String" Nullable="false"/>
+        <NavigationProperty Name="ShopID" Relationship="CatalogService.Menu_ShopID" FromRole="Menu" ToRole="Cafeteria"/>
         <Property Name="Corner" Type="Edm.String" Nullable="false"/>
         <Property Name="Date" Type="Edm.DateTimeOffset" Nullable="false"/>
-        <Property Name="MealType" Type="Edm.String" Nullable="false"/>
+        <NavigationProperty Name="MealType" Relationship="CatalogService.Menu_MealType" FromRole="Menu" ToRole="MealType"/>
         <Property Name="MainTitle" Type="Edm.String" Nullable="false"/>
         <Property Name="SideDish" Type="Edm.String"/>
         <Property Name="Calories" Type="Edm.String"/>
         <Property Name="LikeIt" Type="Edm.Int32"/>
+        <Property Name="ShopID_ShopID" Type="Edm.String" Nullable="false"/>
+        <Property Name="MealType_MealType" Type="Edm.String" Nullable="false"/>
       </EntityType>
       <EntityType Name="Bookmark">
         <Key>
           <PropertyRef Name="UserKey"/>
         </Key>
         <Property Name="UserKey" Type="Edm.String" Nullable="false"/>
-        <Property Name="ShopID" Type="Edm.String"/>
+        <NavigationProperty Name="ShopID" Relationship="CatalogService.Bookmark_ShopID" FromRole="Bookmark" ToRole="Cafeteria"/>
+        <Property Name="ShopID_ShopID" Type="Edm.String"/>
       </EntityType>
+      <Association Name="Menu_ShopID">
+        <End Role="Menu" Type="CatalogService.Menu" Multiplicity="*"/>
+        <End Role="Cafeteria" Type="CatalogService.Cafeteria" Multiplicity="0..1"/>
+        <ReferentialConstraint>
+          <Principal Role="Cafeteria">
+            <PropertyRef Name="ShopID"/>
+          </Principal>
+          <Dependent Role="Menu">
+            <PropertyRef Name="ShopID_ShopID"/>
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Menu_MealType">
+        <End Role="Menu" Type="CatalogService.Menu" Multiplicity="*"/>
+        <End Role="MealType" Type="CatalogService.MealType" Multiplicity="0..1"/>
+        <ReferentialConstraint>
+          <Principal Role="MealType">
+            <PropertyRef Name="MealType"/>
+          </Principal>
+          <Dependent Role="Menu">
+            <PropertyRef Name="MealType_MealType"/>
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Bookmark_ShopID">
+        <End Role="Bookmark" Type="CatalogService.Bookmark" Multiplicity="*"/>
+        <End Role="Cafeteria" Type="CatalogService.Cafeteria" Multiplicity="0..1"/>
+        <ReferentialConstraint>
+          <Principal Role="Cafeteria">
+            <PropertyRef Name="ShopID"/>
+          </Principal>
+          <Dependent Role="Bookmark">
+            <PropertyRef Name="ShopID_ShopID"/>
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
     </Schema>
   </edmx:DataServices>
 </edmx:Edmx>
