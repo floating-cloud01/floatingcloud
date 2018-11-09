@@ -26,3 +26,14 @@ Owner가 Github의 기능인 Organization을 생성해서 공통의 Repository�
 Git을 활용하기 위한 참고 자료도 함께 첨부합니다. 해당 자료는 저도 아직 검토를 다 해보지는 못했는데 필요하면
 모여서 간단하게 실습을 해보는 것도 괜찮을 것 같습니다.
 Commit 단위와 Commit Message 작성법은 제가 좀 더 공부하고 고민한 뒤에 기준을 공유해드리도록 하겠습니다.
+
+폴더 구성
+
+#db
+> CF의 SAP HANA DB구성을 위한 폴더
+
+#srv
+> SAP HANA DB의 데이터를 XSODATA형태로 서비스 구성
+
+#floatingcloud
+> srv의 서비스를 이용하여 외부와 연계를 하기 위한 nodejs모듈
