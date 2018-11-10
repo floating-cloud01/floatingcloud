@@ -14,10 +14,10 @@ entity M_0020 {
 }
 /*식단 리스트 */
 entity T_0010 {
-  key ShopID     : String; //식당ID                       ex)잠실SDS
+  key ShopID     : Association to M_0010; //식당ID           ex)잠실SDS
   key Corner     : String; //코너명                          코리안
   key Date       : DateTime; //날짜                          2018-11-09
-  key MealType   : String; //M:아침, L:점심, D:저녁, N:야식  점심 
+  key MealType   : Association to M_0020; //식사 타입	     점심 
   key MainTitle  : String; //메인 식사명                     김치찌개
       SideDish   : String; //추가 메뉴
       Calories   : String; //칼로리
@@ -26,5 +26,5 @@ entity T_0010 {
 /*사용자 즐겨 찾기 식당-카카오 톡용  */
 entity T_0020 {
  key UserKey : String;//카카오톡 사용자 아이디(난수)
-     ShopID  : String;//M_0010의 키
+     ShopID  : Association to M_0010;//M_0010의 키
 }
