@@ -78,13 +78,22 @@
       "kind": "entity",
       "source": "my.restaurant.T_0010",
       "elements": {
+        "ID": {
+          "origin": "my.restaurant.T_0010..ID",
+          "indexNo": 1,
+          "value": {
+            "=": "T_0010.ID"
+          },
+          "key": true,
+          "type": "cds.UUID",
+          "@cds.persistence.name": "ID"
+        },
         "ShopID": {
           "origin": "my.restaurant.T_0010..ShopID",
-          "indexNo": 1,
+          "indexNo": 2,
           "value": {
             "=": "T_0010.ShopID"
           },
-          "key": true,
           "type": "cds.Association",
           "target": "CatalogService.Cafeteria",
           "foreignKeys": {
@@ -101,31 +110,28 @@
         },
         "Corner": {
           "origin": "my.restaurant.T_0010..Corner",
-          "indexNo": 2,
+          "indexNo": 3,
           "value": {
             "=": "T_0010.Corner"
           },
-          "key": true,
           "type": "cds.String",
           "@cds.persistence.name": "CORNER"
         },
         "Date": {
           "origin": "my.restaurant.T_0010..Date",
-          "indexNo": 3,
+          "indexNo": 4,
           "value": {
             "=": "T_0010.Date"
           },
-          "key": true,
           "type": "cds.DateTime",
           "@cds.persistence.name": "DATE"
         },
         "MealType": {
           "origin": "my.restaurant.T_0010..MealType",
-          "indexNo": 4,
+          "indexNo": 5,
           "value": {
             "=": "T_0010.MealType"
           },
-          "key": true,
           "type": "cds.Association",
           "target": "CatalogService.MealType",
           "foreignKeys": {
@@ -142,17 +148,16 @@
         },
         "MainTitle": {
           "origin": "my.restaurant.T_0010..MainTitle",
-          "indexNo": 5,
+          "indexNo": 6,
           "value": {
             "=": "T_0010.MainTitle"
           },
-          "key": true,
           "type": "cds.String",
           "@cds.persistence.name": "MAINTITLE"
         },
         "SideDish": {
           "origin": "my.restaurant.T_0010..SideDish",
-          "indexNo": 6,
+          "indexNo": 7,
           "value": {
             "=": "T_0010.SideDish"
           },
@@ -161,7 +166,7 @@
         },
         "Calories": {
           "origin": "my.restaurant.T_0010..Calories",
-          "indexNo": 7,
+          "indexNo": 8,
           "value": {
             "=": "T_0010.Calories"
           },
@@ -170,7 +175,7 @@
         },
         "LikeIt": {
           "origin": "my.restaurant.T_0010..LikeIt",
-          "indexNo": 8,
+          "indexNo": 9,
           "value": {
             "=": "T_0010.LikeIt"
           },
@@ -179,7 +184,6 @@
         },
         "ShopID_ShopID": {
           "type": "cds.String",
-          "key": true,
           "value": {
             "=": "T_0010.ShopID_ShopID"
           },
@@ -189,7 +193,6 @@
         },
         "MealType_MealType": {
           "type": "cds.String",
-          "key": true,
           "value": {
             "=": "T_0010.MealType_MealType"
           },
@@ -293,9 +296,14 @@
     "my.restaurant.T_0010": {
       "kind": "entity",
       "elements": {
-        "ShopID": {
+        "ID": {
           "key": true,
           "indexNo": 1,
+          "type": "cds.UUID",
+          "@cds.persistence.name": "ID"
+        },
+        "ShopID": {
+          "indexNo": 2,
           "type": "cds.Association",
           "target": "my.restaurant.M_0010",
           "foreignKeys": {
@@ -309,20 +317,17 @@
           "@cds.persistence.name": "SHOPID"
         },
         "Corner": {
-          "key": true,
-          "indexNo": 2,
+          "indexNo": 3,
           "type": "cds.String",
           "@cds.persistence.name": "CORNER"
         },
         "Date": {
-          "key": true,
-          "indexNo": 3,
+          "indexNo": 4,
           "type": "cds.DateTime",
           "@cds.persistence.name": "DATE"
         },
         "MealType": {
-          "key": true,
-          "indexNo": 4,
+          "indexNo": 5,
           "type": "cds.Association",
           "target": "my.restaurant.M_0020",
           "foreignKeys": {
@@ -336,35 +341,32 @@
           "@cds.persistence.name": "MEALTYPE"
         },
         "MainTitle": {
-          "key": true,
-          "indexNo": 5,
+          "indexNo": 6,
           "type": "cds.String",
           "@cds.persistence.name": "MAINTITLE"
         },
         "SideDish": {
-          "indexNo": 6,
+          "indexNo": 7,
           "type": "cds.String",
           "@cds.persistence.name": "SIDEDISH"
         },
         "Calories": {
-          "indexNo": 7,
+          "indexNo": 8,
           "type": "cds.String",
           "@cds.persistence.name": "CALORIES"
         },
         "LikeIt": {
-          "indexNo": 8,
+          "indexNo": 9,
           "type": "cds.Integer",
           "@cds.persistence.name": "LIKEIT"
         },
         "ShopID_ShopID": {
           "type": "cds.String",
-          "key": true,
           "@odata.foreignKey4": "ShopID",
           "@cds.persistence.name": "SHOPID_SHOPID"
         },
         "MealType_MealType": {
           "type": "cds.String",
-          "key": true,
           "@odata.foreignKey4": "MealType",
           "@cds.persistence.name": "MEALTYPE_MEALTYPE"
         }
@@ -401,6 +403,43 @@
         }
       },
       "@cds.persistence.name": "MY_RESTAURANT_T_0020"
+    },
+    "my.restaurant.T_0030": {
+      "kind": "entity",
+      "elements": {
+        "UserKey": {
+          "key": true,
+          "indexNo": 1,
+          "type": "cds.String",
+          "@cds.persistence.name": "USERKEY"
+        },
+        "Date": {
+          "key": true,
+          "indexNo": 2,
+          "type": "cds.DateTime",
+          "@cds.persistence.name": "DATE"
+        },
+        "DishID": {
+          "indexNo": 3,
+          "type": "cds.Association",
+          "target": "my.restaurant.T_0010",
+          "foreignKeys": {
+            "ID": {
+              "path": "ID",
+              "indexNo": 1,
+              "generatedFieldName": "DishID_ID",
+              "@cds.persistence.name": "ID"
+            }
+          },
+          "@cds.persistence.name": "DISHID"
+        },
+        "DishID_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "DishID",
+          "@cds.persistence.name": "DISHID_ID"
+        }
+      },
+      "@cds.persistence.name": "MY_RESTAURANT_T_0030"
     }
   },
   "version": {

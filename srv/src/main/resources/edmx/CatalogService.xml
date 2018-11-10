@@ -38,22 +38,19 @@
       </EntityType>
       <EntityType Name="Menu">
         <Key>
-          <PropertyRef Name="Corner"/>
-          <PropertyRef Name="Date"/>
-          <PropertyRef Name="MainTitle"/>
-          <PropertyRef Name="ShopID_ShopID"/>
-          <PropertyRef Name="MealType_MealType"/>
+          <PropertyRef Name="ID"/>
         </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
         <NavigationProperty Name="ShopID" Relationship="CatalogService.Menu_ShopID" FromRole="Menu" ToRole="Cafeteria"/>
-        <Property Name="Corner" Type="Edm.String" Nullable="false"/>
-        <Property Name="Date" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="Corner" Type="Edm.String"/>
+        <Property Name="Date" Type="Edm.DateTimeOffset"/>
         <NavigationProperty Name="MealType" Relationship="CatalogService.Menu_MealType" FromRole="Menu" ToRole="MealType"/>
-        <Property Name="MainTitle" Type="Edm.String" Nullable="false"/>
+        <Property Name="MainTitle" Type="Edm.String"/>
         <Property Name="SideDish" Type="Edm.String"/>
         <Property Name="Calories" Type="Edm.String"/>
         <Property Name="LikeIt" Type="Edm.Int32"/>
-        <Property Name="ShopID_ShopID" Type="Edm.String" Nullable="false"/>
-        <Property Name="MealType_MealType" Type="Edm.String" Nullable="false"/>
+        <Property Name="ShopID_ShopID" Type="Edm.String"/>
+        <Property Name="MealType_MealType" Type="Edm.String"/>
       </EntityType>
       <EntityType Name="Bookmark">
         <Key>
