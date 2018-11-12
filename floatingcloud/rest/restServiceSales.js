@@ -1,131 +1,89 @@
 'use strict';
-const express = require('express');
+var express = require('express');
 var request = require("request");
 var cheerio = require('cheerio');
-var iconv  = require('iconv-lite');
-var fs = require('fs');
+var iconv = require('iconv-lite');
+var uuid = require('node-uuid');
 
-
-function getDataFromWelstory(){
-  return new Promise((resolve, reject) => {
-    var requestOptions  = { method: "GET"
-			,uri: "http://welstory.com/menu/seoulrnd/menu.jsp"
-			,headers: { "User-Agent": "Mozilla/5.0" }
-			,encoding: null
-	            	};
-   let aMenu = [];
-   
-request(requestOptions, function(error, response, body) {
-   
-    //10. 대상 화면 파싱.
-    var strContents = new Buffer(body);
-    //20. 파싱한 한글이 깨지므로 인코딩
-    var utf8Text = iconv.decode(strContents, "euc-kr");
-
-    var $ = cheerio.load(utf8Text);//실제 시스템
-    // var $ = cheerio.load(fs.readFileSync('./menu.html'));//테스트 데이터.
-    //30. 파싱 결과
-    let sDate = $('.date','#layer1').text();
-    //cafeaA는 D/E동  
-    let aCafeALunchCorner = $('.cafeA_tit span','#layer2');
-    let aCafeALunchMenu = $('.cafeA_tit','#layer2');
-    let aCafeALunchDetail = $('.cafeA_txt','#layer2');   
-
-    //A식당 아침
-    let aCafeAMorningCorner = $('.cafeA_tit span','#layer1');
-    let aCafeAMorningMenu = $('.cafeA_tit','#layer1');
-    let aCafeAMorningDetail = $('.cafeA_txt','#layer1');
-    //A식당 저녁 
-    let aCafeADinnerCorner = $('.cafeA_tit span','#layer3');
-    let aCafeADinnerMenu = $('.cafeA_tit','#layer3');
-    let aCafeADinnerDetail = $('.cafeA_txt','#layer3');
-     //B식당 점심
-     let aCafeBLunchCorner = $('.cafeB_tit span','#layer2');
-     let aCafeBLunchMenu = $('.cafeB_tit','#layer2');
-     let aCafeBLunchDetail = $('.cafeB_txt','#layer2');
-   
-  
-               //ex){cafe:"A",type:"Morning",corner:"봄이온소반",menu:"김치찌개",detail:"XXXX"};
-   
-    //A식당 아침
-    for(var i=0;i<aCafeAMorningCorner.length;i++){
-      let oMenu = {};
-      oMenu.cafe="A";
-      oMenu.type="Breakfast";
-      oMenu.corner = $(aCafeAMorningCorner[i]).text().replace("\n","").replace(/\s+/g, ' ');//\n제거, 공백 여러개를 하나로 변경
-      oMenu.menu   = $(aCafeAMorningMenu[i]).text().replace("\n","").replace(/\s+/g, ' ').replace(oMenu.corner,'');//menu에 코너명이 같이 있으므로 삭제
-      oMenu.detail = $(aCafeAMorningDetail[i]).text().replace("\n","").replace(/\s+/g, ' ');
-      aMenu.push(oMenu);     
-    }
-    
-     //A식당 점심
-     for(var i=0;i<aCafeALunchCorner.length;i++){
-      let oMenu = {};
-      oMenu.cafe="A";
-      oMenu.type="Lunch";
-      oMenu.corner = $(aCafeALunchCorner[i]).text().replace("\n","").replace(/\s+/g, ' ');//\n제거, 공백 여러개를 하나로 변경
-      oMenu.menu   = $(aCafeALunchMenu[i]).text().replace("\n","").replace(/\s+/g, ' ').replace(oMenu.corner,'');//menu에 코너명이 같이 있으므로 삭제
-      oMenu.detail = $(aCafeALunchDetail[i]).text().replace("\n","").replace(/\s+/g, ' ');
-      aMenu.push(oMenu);     
-    }
-    
-     //A식당 저녁
-     for(var i=0;i<aCafeADinnerCorner.length;i++){
-      let oMenu = {};
-      oMenu.cafe="A";
-      oMenu.type="Dinner";
-      oMenu.corner = $(aCafeADinnerCorner[i]).text().replace("\n","").replace(/\s+/g, ' ');//\n제거, 공백 여러개를 하나로 변경
-      oMenu.menu   = $(aCafeADinnerMenu[i]).text().replace("\n","").replace(/\s+/g, ' ').replace(oMenu.corner,'');//menu에 코너명이 같이 있으므로 삭제
-      oMenu.detail = $(aCafeADinnerDetail[i]).text().replace("\n","").replace(/\s+/g, ' ');
-      aMenu.push(oMenu);     
-    }
-    
-    //B식당 점심
-    for(var i=0;i<aCafeBLunchCorner.length;i++){
-      let oMenu = {};
-      oMenu.cafe="B";
-      oMenu.type="Lunch";
-      oMenu.corner = $(aCafeBLunchCorner[i]).text().replace("\n","").replace(/\s+/g, ' ');//\n제거, 공백 여러개를 하나로 변경
-      oMenu.menu   = $(aCafeBLunchMenu[i]).text().replace("\n","").replace(/\s+/g, ' ').replace(oMenu.corner,'');//menu에 코너명이 같이 있으므로 삭제
-      oMenu.detail = $(aCafeBLunchDetail[i]).text().replace("\n","").replace(/\s+/g, ' ');
-      aMenu.push(oMenu);     
-    }
-    sDate = sDate.replace(/\s+/g, '').substr(0,4)+sDate.replace(/\s+/g, '').substr(5,2)+sDate.replace(/\s+/g, '').substr(8,2);
-    resolve(aMenu);
-  });
-  })
+function getDataFromWelstory(sDate, eDate) {
+	return new Promise((resolve, reject) => {
+		var url = "http://welstory.com/menu/seoulrnd/weeklyMenu.jsp?fg=1&sWDate=" + sDate + "&eWDate=" + eDate;
+		var requestOptions = {
+			method: "GET",
+			// uri: "http://welstory.com/menu/seoulrnd/weeklyMenu.jsp?fg=1&sWDate=20181112&eWDate=20181118",
+			uri: url,
+			headers: {
+				"Content-Type": "text/html"
+			},
+			encoding: null
+		};
+		request(requestOptions, function (error, response, body) {
+			//10. 대상 화면 파싱.
+			var strContents = new Buffer(body);
+			//20. 파싱한 한글이 깨지므로 인코딩
+			var utf8Text = iconv.decode(strContents, "euc-kr");
+			let menuList = new Array();
+			var $ = cheerio.load(utf8Text); //실제 시스템
+			//30. 파싱 결과
+			var dateString = $('.day').text().split(" ")[1].split("~")[0];
+			var year = dateString.substring(0, 4);
+			var month = dateString.substring(4, 6);
+			var day = dateString.substring(6, 8);
+			let fomatDate = new Date(year, month - 1, day);
+			$('table > tbody > tr:nth-child(5) > td > table > tbody > tr').each(function (index, items) { //모닝, 런치, 저녁
+				$(items).find('.menu_name').parent('tr').each(function (_index, _items) { //카페별로
+					$(_items).find('.menu_name2').each(function (i, __items) {
+						var data = new Object();
+						data.ID = uuid.v4();
+						data.Date = new Date(fomatDate.getTime() + (i * 24 * 60 * 60 * 1000) + (9 * 60 * 60 * 1000));
+						var shopColor = $(_items).find('.menu_name').attr('bgcolor');
+						if(shopColor == "e8eca4"){
+							data.ShopID_ShopID = "W02";
+						} else if(shopColor == "ffad01"){
+							data.ShopID_ShopID = "W01";
+						}
+						var mealType = $(items).find('.division').text();
+						var convMealType;
+						switch (mealType) {
+							case "모닝": convMealType = "M"; break;
+							case "런치": convMealType = "L"; break;
+							case "디너": convMealType = "D"; break;
+							default: 
+						}
+						data.MealType_MealType = convMealType;
+						data.Corner = $(_items).find('.menu_name').text();
+						data.MainTitle = $(_items).find('.menu_name2')[i].childNodes[0].data;
+						if ($(_items).find('.Kcal_name')[i].childNodes[0] != undefined) {
+							data.Calories = $(_items).find('.Kcal_name')[i].childNodes[0].data.split(" ")[0];
+						} else data.Calories = "";
+						menuList.push(data);
+					});
+				});
+			});
+			//Data Insert
+			for (var i = 0; i < menuList.length; i++) {
+				var options = {
+					uri: 'https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/Menu',
+					method: 'POST',
+					headers: {
+						"content-type": "application/json"
+					},
+					json: menuList[i]
+				};
+				request(options, function (error, response, body) {
+					if (!error && response.statusCode == 200) {
+						console.log(body.id)
+					}
+				});
+			}
+		});
+	})
 }
-
-
 var router = express.Router();
-//post
-router.post('/:Cafe?',function(request, response) {
-  //body에서 파라미터 추출
-  const sCafe = request.params.Cafe;
-  const sType = request.body.Type;  
-  getDataFromWelstory().then(function(result){
-    let aMenu = result;
-    let aReturnMenu = [];
-    if(sType){
-      aReturnMenu = aMenu.filter(responseMenu => responseMenu.type === sType);
-    }  
-    //식당 필터
-    if(sCafe){
-      if(aReturnMenu.length>0){
-        aReturnMenu = aReturnMenu.filter(responseMenu => responseMenu.cafe === sCafe);
-      } else {
-        aReturnMenu = aMenu.filter(responseMenu => responseMenu.cafe === sCafe);
-      }
-      
-    }
-    //조회한 결과가 없을 경우 에러
-    if (aReturnMenu.length <1) {
-      return response.status(404).json({error: 'Data not found!'});
-    }
-    //결과 리턴
-    return response.json(aReturnMenu);
-  });
-  
+router.post('/', function (req, res) {
+	//body에서 파라미터 추출
+	var startDate = req.body.StartDate;
+	var endDate = req.body.EndDate;  
+	getDataFromWelstory(startDate, endDate);
 })
-
 module.exports = router;
