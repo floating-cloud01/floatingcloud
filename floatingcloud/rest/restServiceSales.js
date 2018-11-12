@@ -3,12 +3,15 @@ var express = require('express');
 var request = require("request");
 var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
+var uuid = require('node-uuid');
 
-function getDataFromWelstory() {
+function getDataFromWelstory(sDate, eDate) {
 	return new Promise((resolve, reject) => {
+		var url = "http://welstory.com/menu/seoulrnd/weeklyMenu.jsp?fg=1&sWDate=" + sDate + "&eWDate=" + eDate;
 		var requestOptions = {
 			method: "GET",
-			uri: "http://welstory.com/menu/seoulrnd/weeklyMenu.jsp?fg=1&sWDate=20181112&eWDate=20181118",
+			// uri: "http://welstory.com/menu/seoulrnd/weeklyMenu.jsp?fg=1&sWDate=20181112&eWDate=20181118",
+			uri: url,
 			headers: {
 				"Content-Type": "text/html"
 			},
@@ -22,67 +25,59 @@ function getDataFromWelstory() {
 			let menuList = new Array();
 			var $ = cheerio.load(utf8Text); //실제 시스템
 			//30. 파싱 결과
+			var dateString = $('.day').text().split(" ")[1].split("~")[0];
+			var year = dateString.substring(0, 4);
+			var month = dateString.substring(4, 6);
+			var day = dateString.substring(6, 8);
+			let fomatDate = new Date(year, month - 1, day);
 			$('table > tbody > tr:nth-child(5) > td > table > tbody > tr').each(function (index, items) { //모닝, 런치, 저녁
 				$(items).find('.menu_name').parent('tr').each(function (_index, _items) { //카페별로
 					$(_items).find('.menu_name2').each(function (i, __items) {
 						var data = new Object();
-						var day;
-						switch (i) {
-						case 0:
-							day = "Mon";
-							break;
-						case 1:
-							day = "Tue";
-							break;
-						case 2:
-							day = "Wed";
-							break;
-						case 3:
-							day = "Thu";
-							break;
-						case 4:
-							day = "Fri";
-							break;
+						data.ID = uuid.v4();
+						data.Date = new Date(fomatDate.getTime() + (i * 24 * 60 * 60 * 1000) + (9 * 60 * 60 * 1000));
+						var mealType = $(items).find('.division').text();
+						var convMealType;
+						switch (mealType) {
+							case "모닝": convMealType = "M"; break;
+							case "런치": convMealType = "L"; break;
+							case "디너": convMealType = "D"; break;
+							default: 
 						}
-						data.Day = day;
-						data.MealType = $(items).find('.division').text();
+						data.MealType_MealType = convMealType;
 						data.Corner = $(_items).find('.menu_name').text();
-						data.Menu = $(_items).find('.menu_name2')[i].childNodes[0].data;
+						data.MainTitle = $(_items).find('.menu_name2')[i].childNodes[0].data;
 						if ($(_items).find('.Kcal_name')[i].childNodes[0] != undefined) {
-							data.Kcal = $(_items).find('.Kcal_name')[i].childNodes[0].data.split(" ")[0];
-						} else data.Kcal = "";
+							data.Calories = $(_items).find('.Kcal_name')[i].childNodes[0].data.split(" ")[0];
+						} else data.Calories = "";
 						menuList.push(data);
 					});
 				});
 			});
-			resolve(menuList);
+			//Data Insert
+			for (var i = 0; i < menuList.length; i++) {
+				var options = {
+					uri: 'https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/Menu',
+					method: 'POST',
+					headers: {
+						"content-type": "application/json"
+					},
+					json: menuList[i]
+				};
+				request(options, function (error, response, body) {
+					if (!error && response.statusCode == 200) {
+						console.log(body.id)
+					}
+				});
+			}
 		});
 	})
 }
-
 var router = express.Router();
-//post
-router.post('', function (request, response) {
+router.post('/', function (req, res) {
 	//body에서 파라미터 추출
-	const sType = request.body.Type;
-	getDataFromWelstory().then(function (result) {
-		let aMenu = result;
-		let aReturnMenu = [];
-		if (sType) {
-			aReturnMenu = aMenu.filter(responseMenu => responseMenu.MealType === sType);
-		} else {
-			aReturnMenu = aMenu;
-		}
-		//조회한 결과가 없을 경우 에러
-		if (aReturnMenu.length < 1) {
-			return response.status(404).json({
-				error: 'Data not found!!'
-			});
-		}
-		//결과 리턴
-		return response.json(aReturnMenu);
-	});
-
+	var startDate = req.body.StartDate;
+	var endDate = req.body.EndDate;  
+	getDataFromWelstory(startDate, endDate);
 })
-
 module.exports = router;
