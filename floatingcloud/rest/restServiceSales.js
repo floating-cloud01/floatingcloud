@@ -36,6 +36,12 @@ function getDataFromWelstory(sDate, eDate) {
 						var data = new Object();
 						data.ID = uuid.v4();
 						data.Date = new Date(fomatDate.getTime() + (i * 24 * 60 * 60 * 1000) + (9 * 60 * 60 * 1000));
+						var shopColor = $(_items).find('.menu_name').attr('bgcolor');
+						if(shopColor == "e8eca4"){
+							data.ShopID_ShopID = "W02";
+						} else if(shopColor == "ffad01"){
+							data.ShopID_ShopID = "W01";
+						}
 						var mealType = $(items).find('.division').text();
 						var convMealType;
 						switch (mealType) {
