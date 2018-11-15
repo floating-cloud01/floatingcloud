@@ -52,7 +52,7 @@ webhook.post('/', function (request, response) {
 			let sCafe = agent.parameters.Cafe;
 			let oDate = "";
 			if (!sCafe) {
-				sCafe = 'W01';
+				sCafe = 'W02';
 			}
 			let sMealType = agent.parameters.MealType;
 			//날짜를 따로 받았을 경우 형태
@@ -71,18 +71,27 @@ webhook.post('/', function (request, response) {
 				case('D'): mealTypeTxt = "저녁"; break;
 			}
 			var cafeTxt;
+			var promise = new Array();
 			switch(sCafe){
-				case('W01'): cafeTxt = "우면1"; break;
-				case('W02'): cafeTxt = "우면2"; break;
-				case('J01'): cafeTxt = "잠실"; break;
+				case('W01'): 
+					cafeTxt = "우면1"; 
+					promise = [getMenu(sDate,"E5IV"), getMenu(sDate,"E5IW"), getMenu(sDate,"E5IX"), getMenu(sDate,"E5IZ")]; 
+					break;
+				case('W02'): 
+					cafeTxt = "우면2"; 
+					promise = [getMenu(sDate,"E5J2"), getMenu(sDate,"E5J3"), getMenu(sDate,"E5J4")]; 
+					break;
+				case('J01'): 
+					cafeTxt = "잠실"; 
+					promise = [getMenu(sDate,"E59C"), getMenu(sDate,"E59D"), getMenu(sDate,"E59E"), getMenu(sDate,"E59F"), getMenu(sDate,"E59G")
+							,getMenu(sDate,"E5E6"), getMenu(sDate,"E5E7"), getMenu(sDate,"E5E8"), getMenu(sDate,"E5E9")
+							, getMenu(sDate,"E5EA"), getMenu(sDate,"E5EB"), getMenu(sDate,"E5EC"), getMenu(sDate,"E5ED")];
+					break;
 			}
 			let sResponse = sDateText + '의 ' + mealTypeTxt + '메뉴 정보(' + cafeTxt + '식당)\n';
-			
-			Promise.all([getMenu(sDate,"E5IV"), getMenu(sDate,"E5IW"), getMenu(sDate,"E5IX"), getMenu(sDate,"E5IZ"), getMenu(sDate,"E5J2"), getMenu(sDate,"E5J3"), getMenu(sDate,"E5J4"),
-		    getMenu(sDate,"E59C"), getMenu(sDate,"E59D"), getMenu(sDate,"E59E"), getMenu(sDate,"E59F"), getMenu(sDate,"E59G"),getMenu(sDate,"E5E6"), getMenu(sDate,"E5E7"),
-		    getMenu(sDate,"E5E8"), getMenu(sDate,"E5E9"), getMenu(sDate,"E5EA"), getMenu(sDate,"E5EB"), getMenu(sDate,"E5EC"), getMenu(sDate,"E5ED")])
+			Promise.all(promise)
 			.then(function (result) {
-		        //convMenuList에 필터(식당, 아/점/저, 날짜)
+		        //convMenuList에 필터(식당, 아/점/저)
 		        var returnValue = [];
 		        convMenuList.forEach(element => {
 		        	if(element.Area_ID === sCafe && element.MealType === sMealType){
