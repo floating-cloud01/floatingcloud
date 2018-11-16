@@ -18,7 +18,7 @@
 
 //const functions = require('firebase-functions');
 const express = require('express');
-const request = require('request');
+const requestClient = require('request');
 
 // const bodyParser = require('body-parser');
 const {
@@ -51,19 +51,29 @@ webhook.post('/', function (request, response) {
 			//10.10 파라미터
 			let sCafe = agent.parameters.Cafe;
 			let oDate = "";
+			let sDate = "";
+			let sDateText  = "";
 			if (!sCafe) {
 				sCafe = 'W02';
 			}
 			let sMealType = agent.parameters.MealType;
-			//날짜를 따로 받았을 경우 형태
-			if (agent.parameters.Date.date_time) {
-				oDate = agent.parameters.Date.date_time;
+			//날짜가 없으면 오늘 날짜로
+			if(!agent.parameters.Date){
+				// oDate = new Date().toISOString().slice(0,10).replace(/-/g,"");
+			    oDate = new Date().toISOString();
 			} else {
-				oDate = agent.parameters.Date.startDateTime;
-			}
-
-			let sDate = oDate.split('T')[0].split('-')[0] + oDate.split('T')[0].split('-')[1] + oDate.split('T')[0].split('-')[2];
-			let sDateText = oDate.split('T')[0].split('-')[0] + '년 ' + oDate.split('T')[0].split('-')[1] + '월 ' + oDate.split('T')[0].split('-')[2] + '일';
+					//날짜를 따로 받았을 경우 형태
+				if (agent.parameters.Date.date_time) {
+					oDate = agent.parameters.Date.date_time;
+				} else {
+					oDate = agent.parameters.Date.startDateTime;
+				}
+				
+			} 
+			sDate = oDate.split('T')[0].split('-')[0] + oDate.split('T')[0].split('-')[1] + oDate.split('T')[0].split('-')[2];
+		    sDateText = oDate.split('T')[0].split('-')[0] + '년 ' + oDate.split('T')[0].split('-')[1] + '월 ' + oDate.split('T')[0].split('-')[2] + '일';
+			 
+			
 			var mealTypeTxt;
 			switch(sMealType){
 				case('M'): mealTypeTxt = "아침"; break;
@@ -139,13 +149,69 @@ webhook.post('/', function (request, response) {
 		QueryMenu(agent);
 
 	}
+	//30.즐겨찾기 관리
+	function ManageFavoriteCafe(agent){
+			let sCafe = agent.parameters.Cafe;
+			let sAction = agent.parameters.DataAction;//Create,Delete,Display
+			let sUserKey = 'dummy';//request.body.user_key;//'dummy';//agent.body.user_key;
+			console.log("==============ManageFavoriteCafe");
+			console.log(agent.body);
+			console.log("==============REQUESTX");
+			
+			
+		    switch (sAction) {
+		    	case 'Create':
+		    		var options = {
+							method: "POST",
+							uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant",
+							body :{UserKey:sUserKey,ShopID_ShopID:sCafe}
+						};
+		    		break;
+		    	case 'Delete':
+		    			var options = {
+							method: "DELETE",
+							uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant",
+							body :{UserKey:sUserKey}
+						};
+		    		break;
+		    	case 'Display':
+		    			var options = {
+							method: "GET",
+							uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant('"+sUserKey+"')"
+						};
+		    		break;
+		    	default:
+		    }
+			return new Promise((resolve, reject) => {
+				requestClient(options, function (error, response, body) {
+								if (error) {
+									// console.log("error!");
+									// return;
+									throw { error };
+								}
+								resolve(body);
+				});
+				
+				}).then(function (result) {
+					console.log("===========result");
+					console.log(result);
+				}).catch(function (err) {
+				      console.log("==========error");
+					  console.log(err); // { error: "Ooops!" }
+					});
+					;
+			
+	}
 
 	// Run the proper handler based on the matched Dialogflow intent
 	let intentMap = new Map();
 	intentMap.set('QueryMenu', QueryMenu);
 	intentMap.set('QueryMenu - ChangeDate', QueryMenu);
 	intentMap.set('QueryMenu - ChangeMealType', QueryMenu);
-	intentMap.set('Default Welcome Intent', DefaultWelcomeIntent); //    
+	intentMap.set('Default Welcome Intent', DefaultWelcomeIntent); //    QueryMenu - ChangeCafe
+	intentMap.set('QueryMenu - ChangeCafe', QueryMenu);//카페 변경
+	intentMap.set('Manage Favorite Cafe', ManageFavoriteCafe);//(카카오톡 전용) 즐겨찾기 관리(입력/삭제/조회)
+	
 
 	agent.handleRequest(intentMap);
 });
@@ -159,7 +225,7 @@ function getMenu(date, hallNo) {
 			method: "GET",
 			uri: "http://welstory.com/menu/getMenuList.do?meal_type=2&course=AA&dt=" + date + "&dtFlag=1&hall_no=" + hallNo + "&restaurant_code="
 		};
-		request(options, function (error, response, body) {
+		requestClient(options, function (error, response, body) {
 			if (error) {
 				console.log("error!");
 				return;
