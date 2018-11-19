@@ -30,7 +30,7 @@ router.post('/message',function(request,response){
   // console.log("==========REQUEST");
   // console.log(request.body.content);
   //user key 전달
-   options.user_key = sUser_key;
+   options.sessionId = sUser_key;
 
   var request = chatapp.textRequest(sContent, options);
     
