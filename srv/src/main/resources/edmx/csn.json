@@ -203,7 +203,7 @@
       },
       "@cds.persistence.name": "CATALOGSERVICE_MENU"
     },
-    "CatalogService.Bookmark": {
+    "CatalogService.BookmarkedRestaurant": {
       "kind": "entity",
       "source": "my.restaurant.T_0020",
       "elements": {
@@ -247,7 +247,63 @@
           "@cds.persistence.name": "SHOPID_SHOPID"
         }
       },
-      "@cds.persistence.name": "CATALOGSERVICE_BOOKMARK"
+      "@cds.persistence.name": "CATALOGSERVICE_BOOKMARKEDRESTAURANT"
+    },
+    "CatalogService.BookmarkedMenu": {
+      "kind": "entity",
+      "source": "my.restaurant.T_0030",
+      "elements": {
+        "UserKey": {
+          "origin": "my.restaurant.T_0030..UserKey",
+          "indexNo": 1,
+          "value": {
+            "=": "T_0030.UserKey"
+          },
+          "key": true,
+          "type": "cds.String",
+          "@cds.persistence.name": "USERKEY"
+        },
+        "Date": {
+          "origin": "my.restaurant.T_0030..Date",
+          "indexNo": 2,
+          "value": {
+            "=": "T_0030.Date"
+          },
+          "key": true,
+          "type": "cds.DateTime",
+          "@cds.persistence.name": "DATE"
+        },
+        "DishID": {
+          "origin": "my.restaurant.T_0030..DishID",
+          "indexNo": 3,
+          "value": {
+            "=": "T_0030.DishID"
+          },
+          "type": "cds.Association",
+          "target": "CatalogService.Menu",
+          "foreignKeys": {
+            "ID": {
+              "origin": "my.restaurant.T_0030..DishID.ID",
+              "indexNo": 1,
+              "path": "ID",
+              "generatedFieldName": "DishID_ID",
+              "@cds.persistence.name": "ID"
+            }
+          },
+          "redirected": true,
+          "@cds.persistence.name": "DISHID"
+        },
+        "DishID_ID": {
+          "type": "cds.UUID",
+          "value": {
+            "=": "T_0030.DishID_ID"
+          },
+          "origin": "my.restaurant.T_0030..DishID_ID",
+          "@odata.foreignKey4": "DishID",
+          "@cds.persistence.name": "DISHID_ID"
+        }
+      },
+      "@cds.persistence.name": "CATALOGSERVICE_BOOKMARKEDMENU"
     },
     "my.restaurant.M_0010": {
       "kind": "entity",

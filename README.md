@@ -1,39 +1,67 @@
-# floatingcloud
-뜬구름 잡는 소리 하네 프로젝트 01
+# 삼성식당
 
-Git 협업 기준
+**뜬구름 잡는 소리하네**
 
-제가 벤치마킹 하고 싶은 Git 협업 방식은 오픈 소스 프로젝트에서 이루어지는 Git 활용 매커니즘(Fork & Pull
-Request)입니다.
-Owner User의 Git Repository에서 구성원들이 협업을 하는 일반적인 방식과 비교해 대략적인 설명을 드리면
-Owner가 Github의 기능인 Organization을 생성해서 공통의 Repository를 구성하고 구성원(Owner 포함)들이 각
-자의 Repository로 공통의 Repository를 Fork해 가는 방식입니다.
-이후에는 구성원들이 Local에서 수정 작업을 한 뒤 각자의 Git Repository에 반영(Commit & Push)하고 최종적으
-로 Github의 기능인 Pull Request를 통해 공통 Repository에 반영을 요청하면 Organization의 Owner가 새로 들어
-온 Pull Request를 검토하고 구성원들의 논의를 거쳐 공통의 Repository에 적용여부를 결정하게 됩니다.
-이 방법을 활용하게 되면 Github의 Pull Request 기능을 통해 구성원들의 협업을 더욱 극대화할 수 있으며 공통의
-원격 Repository 외에도 구성원들이 각자의 Repository를 가지게 됨으로써 Branch 관리가 좀 더 용이하게 됩니다.
-구체적으로 저희 프로젝트에서 이 매커니즘을 활용하기 위한 절차는 아래와 같습니다.
-1. Owner(이하 Charles님)가 Github에서 Organization과 공통 Repository를 생성합니다.
-2. Charles님이 기본 코드 베이스를 공통 Repository에 업로드합니다.
-3. 구성원(Charles님 포함)들이 각자의 Repository로 공통의 Repository를 Fork합니다.
-4. 이후 각자 Local에서 작업 후 수정 사항을 본인의 Repository에 먼저 반영(Commit & Push)합니다. 이때
-작업 과정에서 공통 Repository와는 별도로 자신의 Repository에서 별개의 Branch를 운용할 수 있습니다.
-5. 자신의 Repository에서 수정 작업의 검증이 완료되면 Pull Request를 통해 공통 Repository에 반영을
-요청합니다.
-6. Charles님은 새로운 Pull Request를 검토하고 구성원들과 논의한 후에 공통의 Repository에 반영 여부
-를 결정합니다.
-Git을 활용하기 위한 참고 자료도 함께 첨부합니다. 해당 자료는 저도 아직 검토를 다 해보지는 못했는데 필요하면
-모여서 간단하게 실습을 해보는 것도 괜찮을 것 같습니다.
-Commit 단위와 Commit Message 작성법은 제가 좀 더 공부하고 고민한 뒤에 기준을 공유해드리도록 하겠습니다.
 
-폴더 구성
 
-#db
-> CF의 SAP HANA DB구성을 위한 폴더
+## Getting Started
 
-#srv
-> SAP HANA DB의 데이터를 XSODATA형태로 서비스 구성
+SAP Cloud Platform(SCP)과 NLP 및 AI Device를 활용하여 삼성 그룹 사내 식당의 식단 정보 및 부가적인 서비스를 제공하는 프로젝트입니다.
 
-#floatingcloud
-> srv의 서비스를 이용하여 외부와 연계를 하기 위한 nodejs모듈
+
+
+## Background
+
+1. 그냥 뭔가 만들어서 다른 사람들에게 서비스 해보고 싶다.
+2. 회사 식당의 메뉴 확인하는 곳은 항상 붐빈다.
+3. 뭘 먹을지 쓸데 없이 고민한다.(~~특별히 먹고 싶은 것도 없다.~~)
+4. 내가 너무 많은 칼로리를 섭취하고 있는 것은 아닌지 염려된다.
+5. 내가 먹고 싶은 메뉴가 언제 나오는 지 알고 싶다.
+6. 다른 사람이랑 식당 메뉴를 쉽게 공유하고 싶다.
+
+
+
+## Usage
+
+### Back-End
+
+- SAP Cloud Platform(Neo & Cloud Foundry Environment in Sydney) : 클라우드 기반 HANA DB 설계 및 개발
+- node.js / Java : 챗봇, Google Assistant, 카카오톡 플러스 친구 용 Webhook 개발
+
+### Natural Language Processing
+
+-  DialogFlow 및 recast.ai 등을 활용한 Robust한 대화 설계
+
+### Front-End
+
+- Google Assistant
+- 카카오톡 플러스 친구
+
+
+
+## Structure
+
+- db : Cloud Foundry의 SAP HANA DB 구성
+- srv : SAP HANA DB의 데이터를 XSOData 형태로 서비스 구성
+- floatingcloud : srv의 서비스를 이용하여 외부와 연계를 하기 위한 node.js 모듈
+
+
+
+## Authors
+
+- 양승철 (Charles) *- Samsung SDS -* [github](https://github.com/skyskai)
+
+- 김수인 (God Suin) *- Samsung SDS -* [github](https://github.com/kimsuin1)
+
+- 이재현 (Juan Rybczinski) *- Samsung SDS -* [github](https://github.com/rybczinski0726)
+
+
+
+## License
+
+
+
+
+
+## Acknowledgments
+
