@@ -145,6 +145,7 @@ webhook.post('/', function (request, response) {
 	intentMap.set('QueryMenu', QueryMenu);
 	intentMap.set('QueryMenu - ChangeDate', QueryMenu);
 	intentMap.set('QueryMenu - ChangeMealType', QueryMenu);
+	intentMap.set('QueryMenu - ChangeCafe', QueryMenu);
 	intentMap.set('Default Welcome Intent', DefaultWelcomeIntent); //    
 
 	agent.handleRequest(intentMap);
