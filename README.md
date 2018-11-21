@@ -49,11 +49,11 @@ SAP Cloud Platform(SCP)과 NLP 및 AI Device를 활용하여 삼성 그룹 사�
 
 ## Authors
 
-- 양승철 (Charles) *- Samsung SDS -* [github](https://github.com/skyskai)
+- 양승철 (Charles)  [github](https://github.com/skyskai)
 
-- 김수인 (God Suin) *- Samsung SDS -* [github](https://github.com/kimsuin1)
+- 김수인 (God Suin) [github](https://github.com/kimsuin1)
 
-- 이재현 (Juan Rybczinski) *- Samsung SDS -* [github](https://github.com/rybczinski0726)
+- 이재현 (Juan Rybczinski)  [github](https://github.com/rybczinski0726)
 
 
 
