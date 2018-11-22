@@ -19,20 +19,10 @@ process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
 var webhook = express.Router();
 
-// let aoDate = new Date();//UTC시간 
-// let aoDateUTCTime = aoDate.getTime() + 9 * 60 * 1000 * 60;
-// console.log(aoDate);
-// console.log(new Date(aoDateUTCTime).toISOString());
-// console.log(aoDateUTCTime);
 webhook.post('/', function (request, response) {
 	//Session id저장
-	// console.log("=====request.body.session");
-	// console.log(request.body.session);
 	let aSession = request.body.session.split('/');
-	let sKakaoSessionID = aSession[aSession.length-1] || 'dummy';
-	// console.log(sKakaoSessionID);
-	// console.log("==========request");
-	// console.log(request);
+	let sKakaoSessionID = aSession[aSession.length - 1] || 'dummy';
 	const agent = new WebhookClient({
 		request,
 		response
@@ -49,9 +39,6 @@ webhook.post('/', function (request, response) {
 			let oDate = "";
 			let sDate = "";
 			let sDateText = "";
-			if (!sCafe) {
-				sCafe = 'W02';
-			}
 			let sMealType = agent.parameters.MealType;
 			//날짜가 없으면 오늘 날짜로
 			if (!agent.parameters.Date) {
@@ -71,91 +58,29 @@ webhook.post('/', function (request, response) {
 					console.log("===========서버 계산 시간startDateTime");
 					console.log(oDate);
 				}
-
 			}
-			//메서드 이용
-			// console.log("=====메서드 이용 날짜");
-			// let sTempDate = oDate.getFullYear()+"년 "+oDate.getMonth()+1+"월 "+oDate.getDate()+"일 "
 			sDate = oDate.split('T')[0].split('-')[0] + oDate.split('T')[0].split('-')[1] + oDate.split('T')[0].split('-')[2];
 			sDateText = oDate.split('T')[0].split('-')[0] + '년 ' + oDate.split('T')[0].split('-')[1] + '월 ' + oDate.split('T')[0].split('-')[2] +
 				'일';
-
-			var mealTypeTxt;
-			switch (sMealType) {
-			case ('M'):
-				mealTypeTxt = "아침";
-				break;
-			case ('L'):
-				mealTypeTxt = "점심";
-				break;
-			case ('D'):
-				mealTypeTxt = "저녁";
-				break;
-			}
-			var cafeTxt;
-			var promise = new Array();
-
-			let sResponse = sDateText + '의 ' + mealTypeTxt + '메뉴 정보(' + cafeTxt + '식당)\n';
 			//식당이 입력 값으로 들어오지 않을 경우 즐겨찾기가 있나 확인 
-			
-
-			Promise.all(promise)
-				.then(function (result) {
-					//convMenuList에 필터(식당, 아/점/저)
-					var returnValue = [];
-					convMenuList.forEach(element => {
-						if (element.Area_ID === sCafe && element.MealType === sMealType) {
-							returnValue.push(element);
-						}
+			if(!sCafe){
+				getCafe(sKakaoSessionID).then(function (result) {
+					sCafe = result;
+					let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
+					var promise = getfnArrayByCode(sDate, sCafe);
+					excuteGetMenu(promise, sMealType, sResponse, sDateText, agent).then(function (result){
+						resolve(result);
 					});
-					//결과값 리턴
-					for (var i = 0; i < returnValue.length; i++) {
-						sResponse += '●' + returnValue[i].Corner + "→" + returnValue[i].MainTitle + "\n" + returnValue[i].SideDish + "\n";
-					}
-					if (returnValue.length > 0) {
-						agent.add(sResponse);
-						agent.add(new Suggestion('내일은?'));
-						if (sMealType === 'L') {
-							agent.add(new Suggestion('저녁은?'));
-						}
-						agent.add(new Suggestion('알겠어'));
-					} else {
-						agent.add(sDateText + "에는 메뉴가 없습니다.");
-					}
-					resolve(returnValue);
-					convMenuList.length = 0;
-				})
+				});
+			} else {
+				let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
+				var promise = getfnArrayByCode(sDate, sCafe);
+				excuteGetMenu(promise, sMealType, sResponse, sDateText, agent).then(function (result){
+					resolve(result);
+				});
+			}
 		});
 	}
-
-	// function _querymenu(sCafe, sMealType, aPromise) {
-	// 	Promise.all(promise)
-	// 		.then(function (result) {
-	// 			//convMenuList에 필터(식당, 아/점/저)
-	// 			var returnValue = [];
-	// 			convMenuList.forEach(element => {
-	// 				if (element.Area_ID === sCafe && element.MealType === sMealType) {
-	// 					returnValue.push(element);
-	// 				}
-	// 			});
-	// 			//결과값 리턴
-	// 			for (var i = 0; i < returnValue.length; i++) {
-	// 				sResponse += '●' + returnValue[i].Corner + "→" + returnValue[i].MainTitle + "\n" + returnValue[i].SideDish + "\n";
-	// 			}
-	// 			if (returnValue.length > 0) {
-	// 				agent.add(sResponse);
-	// 				agent.add(new Suggestion('내일은?'));
-	// 				if (sMealType === 'L') {
-	// 					agent.add(new Suggestion('저녁은?'));
-	// 				}
-	// 				agent.add(new Suggestion('알겠어'));
-	// 			} else {
-	// 				agent.add(sDateText + "에는 메뉴가 없습니다.");
-	// 			}
-	// 			resolve(returnValue);
-	// 			convMenuList.length = 0;
-	// 		})
-	// },
 
 	//20.Welcome, 환영 후 바로 메뉴 조회
 	function DefaultWelcomeIntent(agent) {
@@ -183,9 +108,6 @@ webhook.post('/', function (request, response) {
 		let sCafe = agent.parameters.Cafe;
 		let sAction = agent.parameters.DataAction; //Create,Delete,Display
 		let sUserKey = sKakaoSessionID; //agent.sessionId; //request.body.user_key;//'dummy';//agent.body.user_key;
-		// console.log("==============ManageFavoriteCafe");
-		// console.log(agent.body);
-		// console.log("==============REQUESTX");
 
 		switch (sAction) {
 		case 'Create':
@@ -223,8 +145,6 @@ webhook.post('/', function (request, response) {
 		return new Promise((resolve, reject) => {
 			requestClient(options, function (error, response, body) {
 				if (error) {
-					// console.log("error!");
-					// return;
 					throw {
 						error
 					};
@@ -233,8 +153,6 @@ webhook.post('/', function (request, response) {
 			});
 
 		}).then(function (result) {
-			console.log("===========result");
-			console.log(result);
 			let sReturnMessage = "";
 			switch (sAction) {
 			case 'Create':
@@ -269,10 +187,11 @@ webhook.post('/', function (request, response) {
 	agent.handleRequest(intentMap);
 });
 
-let menuList = new Array();
-let convMenuList = new Array();
+
 
 function getMenu(date, hallNo) {
+	let menuList = new Array();
+	let convMenuList = new Array();
 	return new Promise((resolve, reject) => {
 		var options = {
 			method: "GET",
@@ -366,6 +285,61 @@ function getMenu(date, hallNo) {
 		});
 	});
 }
+//Menu가져와서 Response에 추가
+function excuteGetMenu(promise, mealType, sResponse, sDateText, agent){
+	return new Promise((resolve, reject) => {
+		Promise.all(promise)
+			.then(function (result) {
+				//convMenuList에 필터(아/점/저)
+				var returnValue = [];
+				result.forEach(element => {
+					element.forEach(subElement => {
+						if (subElement.MealType === mealType) {
+						returnValue.push(subElement);
+					}
+					});
+				});
+				//결과값 리턴
+				for (var i = 0; i < returnValue.length; i++) {
+					sResponse += '●' + returnValue[i].Corner + "→" + returnValue[i].MainTitle + "\n" + returnValue[i].SideDish + "\n";
+				}
+				if (returnValue.length > 0) {
+					agent.add(sResponse);
+					agent.add(new Suggestion('내일은?'));
+					if (mealType === 'L') {
+						agent.add(new Suggestion('저녁은?'));
+					}
+					agent.add(new Suggestion('알겠어'));
+				} else {
+					agent.add(sDateText + "에는 메뉴가 없습니다.");
+				}
+				resolve(agent);
+			})
+	});
+}
+//즐겨찾기한 식당이 있는지 조회
+function getCafe(sKakaoSessionID) {
+	return new Promise(function (resolve, reject) {
+		var options = {
+			method: "GET",
+			uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant('" +
+				sKakaoSessionID + "')",
+			json: true
+		};
+		requestClient(options, function (error, response, body) {
+			if (error) {
+				console.log("error!");
+				return;
+			}
+			if (body.d) {
+				var myCafe = body.d.ShopID_ShopID;
+			} else {
+				var myCafe = "W02";
+			}
+			resolve(myCafe);
+		});
+	});
+}
 //식당코드->명
 function getCafeName(sCafeId) {
 	switch (sCafeId) {
@@ -376,7 +350,37 @@ function getCafeName(sCafeId) {
 	case 'W02':
 		return '우면2식당';
 	default:
-
 	}
+}
+//MealType->명
+function getMealTypeName(mealType) {
+	switch (mealType) {
+	case 'M':
+		return '아침';
+	case 'L':
+		return '점심';
+	case 'D':
+		return '저녁';
+	default:
+	}
+}
+//MealType->명
+function getfnArrayByCode(sDate, sCafeId) {
+	var promise = new Array();
+	switch (sCafeId) {
+		case ('W01'):
+			promise = [getMenu(sDate, "E5IV"), getMenu(sDate, "E5IW"), getMenu(sDate, "E5IX"), getMenu(sDate, "E5IZ")];
+			break;
+		case ('W02'):
+			promise = [getMenu(sDate, "E5J2"), getMenu(sDate, "E5J3"), getMenu(sDate, "E5J4")];
+			break;
+		case ('J01'):
+			promise = [getMenu(sDate, "E59C"), getMenu(sDate, "E59D"), getMenu(sDate, "E59E"), getMenu(sDate, "E59F"), getMenu(sDate, "E59G"), getMenu(sDate, "E5E6"), 
+						getMenu(sDate, "E5E7"), getMenu(sDate, "E5E8"), getMenu(sDate, "E5E9"), getMenu(sDate, "E5EA"), getMenu(sDate, "E5EB"), getMenu(sDate, "E5EC"),
+						getMenu(sDate, "E5ED")];
+			break;
+		default:
+	}
+	return promise;
 }
 module.exports = webhook;
