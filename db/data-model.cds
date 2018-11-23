@@ -1,5 +1,10 @@
 namespace my.restaurant;
 /*식당 마스터 */
+// entity M_0005 {
+//   key AreaID : String(10);//W01,W02,J01
+//       AreaName : String ;//우면1식당,우면2식당,잠실SDS
+      
+// }
 entity M_0010 {
   key ShopID : String;//E5J4
       Title  : String;//2단지코리안

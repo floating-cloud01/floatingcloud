@@ -126,6 +126,10 @@ webhook.post('/', function (request, response) {
         
 		switch (sAction) {
 		case 'Create':
+			if(!sCafe){
+				agent.add("식당 이름을 말씀해주세요(잠실,우면1식당, 우면2식당)");
+				return;
+			}
 			var options = {
 				method: "POST",
 				uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant",
@@ -181,9 +185,19 @@ webhook.post('/', function (request, response) {
 			}
 			agent.add(sReturnMessage);
 		}).catch(function (err) {
-			console.log("==========error");
-			console.log(err); // { error: "Ooops!" }
-			agent.add("즐겨찾기 등록에 실패하였습니다.");
+			switch (sAction) {
+			  case 'Create':
+			  	   agent.add("즐겨찾기 등록에 실패하였습니다.");
+			  		break;
+			case 'Delete':
+				agent.add("즐겨찾기 삭제에 실패하였습니다.");
+					break;
+			case 'Display':
+				    agent.add("등록된 즐겨찾기가 없습니다");
+					break;
+			default:
+			}
+			
 		});
 
 	}
@@ -325,11 +339,11 @@ function excuteGetMenu(promise, mealType, sResponse, sDateText, sMenuAction,agen
 					});
 				});
 				//상세 메뉴 조회를 위해 현재 조회한 데이터를 저장(lifespan 1)
-				agent.setContext({
-			      name: 'menu',
-			      lifespan: 1,
-			      parameters:returnValue
-			    });
+				// agent.setContext({
+			 //     name: 'menu',
+			 //     lifespan: 1,
+			 //     parameters:returnValue
+			 //   });
 			    //sMenuAction의 값에 따라 리턴 값 변경(RECOMMEND,RANDOM,LOWCALORIES,HIGHCALORIES)
 			    switch (sMenuAction) {
 			    	case 'RECOMMEND':
@@ -351,8 +365,13 @@ function excuteGetMenu(promise, mealType, sResponse, sDateText, sMenuAction,agen
 			    }
 			    	
 				//결과값 리턴
+				let iCal = 0;
 				for (var i = 0; i < aFilteredRetunValue.length; i++) {
-					sResponse += i+1 + "." + aFilteredRetunValue[i].Corner + "→" + aFilteredRetunValue[i].MainTitle +"("+aFilteredRetunValue[i].Calories+"Kcal)\n" ;//+ aFilteredRetunValue[i].SideDish + "\n";
+					iCal = aFilteredRetunValue[i].Calories?aFilteredRetunValue[i].Calories:"미제공"
+					sResponse += i+1 + "." + aFilteredRetunValue[i].Corner + "→" + 
+											aFilteredRetunValue[i].MainTitle + "(" + 
+											 iCal +"Kcal)" + 
+											"\n" ;//+ aFilteredRetunValue[i].SideDish + "\n";
 				}
 				if (aFilteredRetunValue.length > 0) {
 					agent.add(sResponse);
