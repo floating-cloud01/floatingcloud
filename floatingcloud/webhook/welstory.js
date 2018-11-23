@@ -40,10 +40,14 @@ webhook.post('/', function (request, response) {
 			let sDate = "";
 			let sDateText = "";
 			let sMealType = agent.parameters.MealType;
+			let oDateUTC = "";
+			//추천,랜덤, 저칼로리, 고칼로리 식단 추천.추천/랜덤=1개, 저칼로리/고칼로리=상위3개
+			let sMenuAction = agent.parameters.MenuAction;//RECOMMEND,RANDOM,LOWCALORIES,HIGHCALORIES
 			//날짜가 없으면 오늘 날짜로
 			if (!agent.parameters.Date) {
 				// oDate = new Date().toISOString().slice(0,10).replace(/-/g,"");
-				let oDateUTC = new Date().getTime() + 9 * 60 * 1000 * 60; //UTC시간 + 9시간
+				//서버가 시드니라고 가정하고
+				oDateUTC = new Date().getTime() + 9 * 60 * 1000 * 60; //UTC시간 + 9시간
 				oDate = new Date(oDateUTC).toISOString();
 				console.log("===========서버 계산 시간");
 				console.log(oDate);
@@ -58,24 +62,29 @@ webhook.post('/', function (request, response) {
 					console.log("===========서버 계산 시간startDateTime");
 					console.log(oDate);
 				}
+			};
+			//sMealType이 없으면 현재 시간을 기준으로 계산
+			if(!sMealType){
+			  sMealType = getMealTypeByTime();
 			}
+
 			sDate = oDate.split('T')[0].split('-')[0] + oDate.split('T')[0].split('-')[1] + oDate.split('T')[0].split('-')[2];
 			sDateText = oDate.split('T')[0].split('-')[0] + '년 ' + oDate.split('T')[0].split('-')[1] + '월 ' + oDate.split('T')[0].split('-')[2] +
 				'일';
 			//식당이 입력 값으로 들어오지 않을 경우 즐겨찾기가 있나 확인 
-			if(!sCafe){
+			if (!sCafe) {
 				getCafe(sKakaoSessionID).then(function (result) {
 					sCafe = result;
 					let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
 					var promise = getfnArrayByCode(sDate, sCafe);
-					excuteGetMenu(promise, sMealType, sResponse, sDateText, agent).then(function (result){
+					excuteGetMenu(promise, sMealType, sResponse, sDateText, agent).then(function (result) {
 						resolve(result);
 					});
 				});
 			} else {
 				let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
 				var promise = getfnArrayByCode(sDate, sCafe);
-				excuteGetMenu(promise, sMealType, sResponse, sDateText, agent).then(function (result){
+				excuteGetMenu(promise, sMealType, sResponse, sDateText, agent).then(function (result) {
 					resolve(result);
 				});
 			}
@@ -108,7 +117,7 @@ webhook.post('/', function (request, response) {
 		let sCafe = agent.parameters.Cafe;
 		let sAction = agent.parameters.DataAction; //Create,Delete,Display
 		let sUserKey = sKakaoSessionID; //agent.sessionId; //request.body.user_key;//'dummy';//agent.body.user_key;
-
+        
 		switch (sAction) {
 		case 'Create':
 			var options = {
@@ -124,11 +133,9 @@ webhook.post('/', function (request, response) {
 		case 'Delete':
 			var options = {
 				method: "DELETE",
-				uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant",
-				json: true,
-				body: {
-					"UserKey": sUserKey
-				}
+				uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant('" +
+					sUserKey + "')",
+				json: true
 			};
 			break;
 		case 'Display':
@@ -186,8 +193,6 @@ webhook.post('/', function (request, response) {
 
 	agent.handleRequest(intentMap);
 });
-
-
 
 function getMenu(date, hallNo) {
 	let menuList = new Array();
@@ -286,7 +291,7 @@ function getMenu(date, hallNo) {
 	});
 }
 //Menu가져와서 Response에 추가
-function excuteGetMenu(promise, mealType, sResponse, sDateText, agent){
+function excuteGetMenu(promise, mealType, sResponse, sDateText, agent) {
 	return new Promise((resolve, reject) => {
 		Promise.all(promise)
 			.then(function (result) {
@@ -295,8 +300,8 @@ function excuteGetMenu(promise, mealType, sResponse, sDateText, agent){
 				result.forEach(element => {
 					element.forEach(subElement => {
 						if (subElement.MealType === mealType) {
-						returnValue.push(subElement);
-					}
+							returnValue.push(subElement);
+						}
 					});
 				});
 				//결과값 리턴
@@ -368,19 +373,44 @@ function getMealTypeName(mealType) {
 function getfnArrayByCode(sDate, sCafeId) {
 	var promise = new Array();
 	switch (sCafeId) {
-		case ('W01'):
-			promise = [getMenu(sDate, "E5IV"), getMenu(sDate, "E5IW"), getMenu(sDate, "E5IX"), getMenu(sDate, "E5IZ")];
-			break;
-		case ('W02'):
-			promise = [getMenu(sDate, "E5J2"), getMenu(sDate, "E5J3"), getMenu(sDate, "E5J4")];
-			break;
-		case ('J01'):
-			promise = [getMenu(sDate, "E59C"), getMenu(sDate, "E59D"), getMenu(sDate, "E59E"), getMenu(sDate, "E59F"), getMenu(sDate, "E59G"), getMenu(sDate, "E5E6"), 
-						getMenu(sDate, "E5E7"), getMenu(sDate, "E5E8"), getMenu(sDate, "E5E9"), getMenu(sDate, "E5EA"), getMenu(sDate, "E5EB"), getMenu(sDate, "E5EC"),
-						getMenu(sDate, "E5ED")];
-			break;
-		default:
+	case ('W01'):
+		promise = [getMenu(sDate, "E5IV"), getMenu(sDate, "E5IW"), getMenu(sDate, "E5IX"), getMenu(sDate, "E5IZ")];
+		break;
+	case ('W02'):
+		promise = [getMenu(sDate, "E5J2"), getMenu(sDate, "E5J3"), getMenu(sDate, "E5J4")];
+		break;
+	case ('J01'):
+		promise = [getMenu(sDate, "E59C"), getMenu(sDate, "E59D"), getMenu(sDate, "E59E"), getMenu(sDate, "E59F"), getMenu(sDate, "E59G"),
+			getMenu(sDate, "E5E6"),
+			getMenu(sDate, "E5E7"), getMenu(sDate, "E5E8"), getMenu(sDate, "E5E9"), getMenu(sDate, "E5EA"), getMenu(sDate, "E5EB"), getMenu(sDate,
+				"E5EC"),
+			getMenu(sDate, "E5ED")
+		];
+		break;
+	default:
 	}
 	return promise;
+}
+//현재 시간을 기준으로 MealType계산
+function getMealTypeByTime() {
+	let oCurrentDateTime = new Date().getTime() + 9 * 60 * 1000 * 60; //UTC시간 + 9시간
+	let iHour = new Date(oCurrentDateTime).getHours()*1;
+	// console.log("====식사타입용 시간");
+	// console.log(iHour);
+	// console.log(iHour===11);
+	switch (true) {
+	case (iHour<9): //아침
+		console.log("M");
+		return 'M';
+		break;
+	case (iHour>=9 && iHour<13): //점심
+		console.log("L");
+		return 'L';
+		break;
+	default: //저녁
+		console.log("D");
+		return 'D';
+		break;
+	}
 }
 module.exports = webhook;
