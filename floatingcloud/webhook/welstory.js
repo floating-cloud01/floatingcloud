@@ -79,14 +79,18 @@ webhook.post('/', function (request, response) {
 					sCafe = result;
 					let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
 					var promise = getfnArrayByCode(sDate, sCafe);
+
 					excuteGetMenu(promise, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
+
 						resolve(result);
 					});
 				});
 			} else {
 				let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
 				var promise = getfnArrayByCode(sDate, sCafe);
+
 				excuteGetMenu(promise, sMealType, sResponse, sDateText, sMenuAction, agent).then(function (result) {
+
 					resolve(result);
 				});
 			}
@@ -455,6 +459,7 @@ function getMealTypeByTime() {
 		break;
 	}
 }
+
 //정렬
 ///common Functions
 function TopNArrays(aData,bDesc,sSortProp,iTop){
@@ -472,4 +477,5 @@ function TopNArrays(aData,bDesc,sSortProp,iTop){
   //20. 상위 iTop개 리턴
   return aData.slice(0,iTop);
 };
+
 module.exports = webhook;
