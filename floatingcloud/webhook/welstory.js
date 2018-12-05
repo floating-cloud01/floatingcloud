@@ -83,6 +83,7 @@ webhook.post('/', function (request, response) {
 					excuteGetMenu(promise, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
 
 						resolve(result);
+					
 					});
 				});
 			} else {
@@ -93,6 +94,7 @@ webhook.post('/', function (request, response) {
 
 					resolve(result);
 				});
+				
 			}
 		});
 	}
@@ -120,6 +122,7 @@ webhook.post('/', function (request, response) {
 	}
 	//30.즐겨찾기 관리
 	function ManageFavoriteCafe(agent) {
+		// console.log(agent.conv.user);
 		let sCafe = agent.parameters.Cafe;
 		let sAction = agent.parameters.DataAction; //Create,Delete,Display
 		let sUserKey = sKakaoSessionID; //agent.sessionId; //request.body.user_key;//'dummy';//agent.body.user_key;
@@ -149,6 +152,7 @@ webhook.post('/', function (request, response) {
 			};
 			break;
 		case 'Display':
+		default:
 			var options = {
 				method: "GET",
 				uri: "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/BookmarkedRestaurant('" +
@@ -156,9 +160,9 @@ webhook.post('/', function (request, response) {
 				json: true
 			};
 			break;
-		default:
+		
 		}
-		console.log(options);
+	
 		return new Promise((resolve, reject) => {
 			requestClient(options, function (error, response, body) {
 				if (error) {
@@ -184,6 +188,8 @@ webhook.post('/', function (request, response) {
 			default:
 			}
 			agent.add(sReturnMessage);
+			agent.add(new Suggestion('오늘 점심 메뉴'));
+			agent.add(new Suggestion('추천 메뉴'));
 		}).catch(function (err) {
 			switch (sAction) {
 			  case 'Create':
@@ -197,6 +203,8 @@ webhook.post('/', function (request, response) {
 					break;
 			default:
 			}
+			agent.add(new Suggestion('오늘 점심 메뉴'));
+			agent.add(new Suggestion('추천 메뉴'));
 			
 		});
 
@@ -206,8 +214,8 @@ webhook.post('/', function (request, response) {
 		//앞에서 저장한 메뉴읽어
 		let sResponse = "상세메뉴 반영중";
 		// let aPrevMenu = agent.getContext('menu').parameters;
-		console.log("==QueryMenuDrillDown");
-		console.log(agent.contexts);
+		// console.log("==QueryMenuDrillDown");
+		// console.log(agent.contexts);
 		// for (var i = 0; i < aPrevMenu.length; i++) {
 		// 			sResponse += i+1 + "." + aPrevMenu[i].Corner + "→" + aPrevMenu[i].MainTitle +"("+aPrevMenu[i].Calories+")\n"  + aPrevMenu[i].SideDish + "\n";
 		// }
@@ -240,6 +248,7 @@ function getMenu(date, hallNo) {
 				console.log("error!");
 				return;
 			}
+			// console.log(body);
 			var menuArray = JSON.parse(body);
 			menuArray.forEach(element => {
 				var id = element.menu_meal_type + element.menu_course_type + element.hall_no;
@@ -335,9 +344,12 @@ function excuteGetMenu(promise, mealType, sResponse, sDateText, sMenuAction,agen
 					element.forEach(subElement => {
 						if (subElement.MealType === mealType) {
 							returnValue.push(subElement);
+						
 						}
 					});
 				});
+					// console.log(returnValue);
+				
 				//상세 메뉴 조회를 위해 현재 조회한 데이터를 저장(lifespan 1)
 				// agent.setContext({
 			 //     name: 'menu',
@@ -360,6 +372,11 @@ function excuteGetMenu(promise, mealType, sResponse, sDateText, sMenuAction,agen
 			    		aFilteredRetunValue = TopNArrays(returnValue,true,'Calories',3);
 			    		sResponse += '<고칼로리 3개>\n';
 			    		break;
+			    	case 'SPECIAL':
+			    		aFilteredRetunValue = returnValue.filter(function(value){
+			    			return value.MainTitle.includes("선택식");
+			    		})
+			    		break;
 			        default:
 			            aFilteredRetunValue = returnValue;
 			    }
@@ -379,7 +396,7 @@ function excuteGetMenu(promise, mealType, sResponse, sDateText, sMenuAction,agen
 					if (mealType === 'L') {
 						agent.add(new Suggestion('저녁은?'));
 					}
-					agent.add(new Suggestion('알겠어'));
+					
 				} else {
 					agent.add(sDateText + "에는 메뉴가 없습니다.");
 				}
