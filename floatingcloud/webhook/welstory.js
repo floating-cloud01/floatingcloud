@@ -78,20 +78,15 @@ webhook.post('/', function (request, response) {
 				getCafe(sKakaoSessionID).then(function (result) {
 					sCafe = result;
 					let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
-					var promise = getfnArrayByCode(sDate, sCafe);
-
-					excuteGetMenu(promise, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
-
+					var strCafeCode = getStrCode(sCafe);
+					excuteGetMenu(strCafeCode, sDate, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
 						resolve(result);
-					
 					});
 				});
 			} else {
 				let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
-				var promise = getfnArrayByCode(sDate, sCafe);
-
-				excuteGetMenu(promise, sMealType, sResponse, sDateText, sMenuAction, agent).then(function (result) {
-
+				var strCafeCode = getStrCode(sCafe);
+				excuteGetMenu(strCafeCode, sDate, sMealType, sResponse, sDateText, sMenuAction, agent).then(function (result) {
 					resolve(result);
 				});
 				
@@ -130,7 +125,7 @@ webhook.post('/', function (request, response) {
 		switch (sAction) {
 		case 'Create':
 			if(!sCafe){
-				agent.add("식당 이름을 말씀해주세요(잠실,우면1식당, 우면2식당)");
+				agent.add("식당 이름을 말씀해주세요(잠실,우면1식당,우면2식당,서초)");
 				return;
 			}
 			var options = {
@@ -241,7 +236,7 @@ function getMenu(date, hallNo) {
 	return new Promise((resolve, reject) => {
 		var options = {
 			method: "GET",
-			uri: "http://welstory.com/menu/getMenuList.do?meal_type=2&course=AA&dt=" + date + "&dtFlag=1&hall_no=" + hallNo + "&restaurant_code="
+			uri: "http://welstory.com/menu/getMenuList.do?dt=" + date + "&hall_no=" + hallNo
 		};
 		requestClient(options, function (error, response, body) {
 			if (error) {
@@ -298,6 +293,9 @@ function getMenu(date, hallNo) {
 					case ('E5ED'):
 						data.Area_ID = "J01";
 						break;
+					case ('E5KL'):
+						data.Area_ID = "S01";
+						break;
 					default:
 					}
 					data.Shop_ID = element.hall_no;
@@ -333,23 +331,18 @@ function getMenu(date, hallNo) {
 	});
 }
 //Menu가져와서 Response에 추가
-function excuteGetMenu(promise, mealType, sResponse, sDateText, sMenuAction,agent) {
+function excuteGetMenu(strCode, sDate, mealType, sResponse, sDateText, sMenuAction,agent) {
 	return new Promise((resolve, reject) => {
-		Promise.all(promise)
+		getMenu(sDate, strCode)
 			.then(function (result) {
 				//convMenuList에 필터(아/점/저)
 				var returnValue = [];
 				let aFilteredRetunValue = [];
 				result.forEach(element => {
-					element.forEach(subElement => {
-						if (subElement.MealType === mealType) {
-							returnValue.push(subElement);
-						
-						}
-					});
+		        	if(element.MealType === mealType){
+		        		returnValue.push(element);
+		        	}
 				});
-					// console.log(returnValue);
-				
 				//상세 메뉴 조회를 위해 현재 조회한 데이터를 저장(lifespan 1)
 				// agent.setContext({
 			 //     name: 'menu',
@@ -436,6 +429,8 @@ function getCafeName(sCafeId) {
 		return '우면1식당';
 	case 'W02':
 		return '우면2식당';
+	case 'S01':
+		return '서초생명';
 	default:
 	}
 }
@@ -452,26 +447,24 @@ function getMealTypeName(mealType) {
 	}
 }
 //MealType->명
-function getfnArrayByCode(sDate, sCafeId) {
-	var promise = new Array();
+function getStrCode(sCafeId) {
+	var strCode;
 	switch (sCafeId) {
 	case ('W01'):
-		promise = [getMenu(sDate, "E5IV"), getMenu(sDate, "E5IW"), getMenu(sDate, "E5IX"), getMenu(sDate, "E5IZ")];
+		strCode = "E5IV,E5IW,E5IX,E5IZ";
 		break;
 	case ('W02'):
-		promise = [getMenu(sDate, "E5J2"), getMenu(sDate, "E5J3"), getMenu(sDate, "E5J4")];
+		strCode = "E5J2,E5J3,E5J4";
 		break;
 	case ('J01'):
-		promise = [getMenu(sDate, "E59C"), getMenu(sDate, "E59D"), getMenu(sDate, "E59E"), getMenu(sDate, "E59F"), getMenu(sDate, "E59G"),
-			getMenu(sDate, "E5E6"),
-			getMenu(sDate, "E5E7"), getMenu(sDate, "E5E8"), getMenu(sDate, "E5E9"), getMenu(sDate, "E5EA"), getMenu(sDate, "E5EB"), getMenu(sDate,
-				"E5EC"),
-			getMenu(sDate, "E5ED")
-		];
+		strCode = "E59C,E59D,E59E,E59F,E59G,E5E6,E5E7,E5E8,E5E9,E5EA,E5EB,E5EC,E5ED";
+		break;
+	case ('S01'):
+		strCode = "E5KL";
 		break;
 	default:
 	}
-	return promise;
+	return strCode;
 }
 //현재 시간을 기준으로 MealType계산
 function getMealTypeByTime() {
