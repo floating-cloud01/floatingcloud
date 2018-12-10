@@ -8,6 +8,7 @@ const express = require('express');
 const kakao = require('./kakao/plusfriend');
 // const restServiceSales = require('./rest/restServiceSales');
 const welstory = require('./webhook/welstory');
+const scheduler = require('./scheduler/scheduler');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
@@ -20,10 +21,11 @@ app.use(bodyParser.json());
 // app.use('/webhook', webhook);
 //카카오 플러스 친구
 app.use('/kakao', kakao);
-app.use('/webhook', welstory);
+app.use('/webhook', welstory.webhook);
 // app.use('/welstory',restServiceSales);
 //20.index.html호출용 서비스 생성
 app.use(express.static('static'))
 var server = app.listen(port, function () {
-    console.log('Welstory' + port)
+    scheduler.scheduleForSavingMenu();
+    console.log('Welstory' + port);
 })
