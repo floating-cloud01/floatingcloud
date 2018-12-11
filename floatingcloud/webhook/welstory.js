@@ -507,4 +507,7 @@ function TopNArrays(aData,bDesc,sSortProp,iTop){
   return aData.slice(0,iTop);
 };
 
-module.exports = webhook;
+module.exports = {
+	webhook,
+	getMenu
+};
