@@ -20,8 +20,6 @@ process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 var webhook = express.Router();
 
 webhook.post('/', function (request, response) {
-	
-	
 	const agent = new WebhookClient({
 		request,
 		response
@@ -78,15 +76,13 @@ webhook.post('/', function (request, response) {
 				getCafe(sKakaoSessionID).then(function (result) {
 					sCafe = result;
 					let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
-					var strCafeCode = getStrCode(sCafe);
-					excuteGetMenu(strCafeCode, sDate, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
+					excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
 						resolve(result);
 					});
 				});
 			} else {
 				let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
-				var strCafeCode = getStrCode(sCafe);
-				excuteGetMenu(strCafeCode, sDate, sMealType, sResponse, sDateText, sMenuAction, agent).then(function (result) {
+				excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction, agent).then(function (result) {
 					resolve(result);
 				});
 				
@@ -301,6 +297,7 @@ function getMenu(date, hallNo) {
 					data.Shop_ID = element.hall_no;
 					data.Corner = element.course_txt;
 					data.Date = element.menu_dt;
+					data.Recipe_cd = element.recipe_cd;
 					switch (element.menu_meal_type) {
 					case ('1'):
 						data.MealType = "M";
@@ -331,26 +328,30 @@ function getMenu(date, hallNo) {
 	});
 }
 //Menu가져와서 Response에 추가
-function excuteGetMenu(strCode, sDate, mealType, sResponse, sDateText, sMenuAction,agent) {
+function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction,agent) {
 	return new Promise((resolve, reject) => {
-		getMenu(sDate, strCode)
-			.then(function (result) {
-				//convMenuList에 필터(아/점/저)
-				var returnValue = [];
+		var sUrl = "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/Menu?$filter=ShopID_ShopID eq '" +
+		     	   sCafe + "' and MealType_MealType eq '" + sMealType + "' and Date eq datetimeoffset'" + parseYyyymmddToString(sDate).toISOString() + "'";
+		var options = {
+			method: "GET",
+			uri: sUrl,
+			json: true
+		};
+		requestClient(options, function (error, response, body) {
+			if (error) {
+				console.log("error!");
+				return;
+			}
+			if (body.d.results) {
+				var returnValue = body.d.results;
 				let aFilteredRetunValue = [];
-				result.forEach(element => {
-		        	if(element.MealType === mealType){
-		        		returnValue.push(element);
-		        	}
-				});
 				//상세 메뉴 조회를 위해 현재 조회한 데이터를 저장(lifespan 1)
 				// agent.setContext({
 			 //     name: 'menu',
 			 //     lifespan: 1,
 			 //     parameters:returnValue
 			 //   });
-			    //sMenuAction의 값에 따라 리턴 값 변경(RECOMMEND,RANDOM,LOWCALORIES,HIGHCALORIES)
-			    switch (sMenuAction) {
+				switch (sMenuAction) {
 			    	case 'RECOMMEND':
 			    	case 'RANDOM':
     				   let iIndex =  Math.floor(Math.random() * (returnValue.length - 0));
@@ -373,8 +374,7 @@ function excuteGetMenu(strCode, sDate, mealType, sResponse, sDateText, sMenuActi
 			        default:
 			            aFilteredRetunValue = returnValue;
 			    }
-			    	
-				//결과값 리턴
+			    //결과값 리턴
 				let iCal = 0;
 				for (var i = 0; i < aFilteredRetunValue.length; i++) {
 					iCal = aFilteredRetunValue[i].Calories?aFilteredRetunValue[i].Calories:"미제공"
@@ -386,7 +386,7 @@ function excuteGetMenu(strCode, sDate, mealType, sResponse, sDateText, sMenuActi
 				if (aFilteredRetunValue.length > 0) {
 					agent.add(sResponse);
 					agent.add(new Suggestion('내일은?'));
-					if (mealType === 'L') {
+					if (sMealType === 'L') {
 						agent.add(new Suggestion('저녁은?'));
 					}
 					
@@ -394,7 +394,8 @@ function excuteGetMenu(strCode, sDate, mealType, sResponse, sDateText, sMenuActi
 					agent.add(sDateText + "에는 메뉴가 없습니다.");
 				}
 				resolve(agent);
-			})
+			}
+		});
 	});
 }
 //즐겨찾기한 식당이 있는지 조회
@@ -446,26 +447,6 @@ function getMealTypeName(mealType) {
 	default:
 	}
 }
-//MealType->명
-function getStrCode(sCafeId) {
-	var strCode;
-	switch (sCafeId) {
-	case ('W01'):
-		strCode = "E5IV,E5IW,E5IX,E5IZ";
-		break;
-	case ('W02'):
-		strCode = "E5J2,E5J3,E5J4";
-		break;
-	case ('J01'):
-		strCode = "E59C,E59D,E59E,E59F,E59G,E5E6,E5E7,E5E8,E5E9,E5EA,E5EB,E5EC,E5ED";
-		break;
-	case ('S01'):
-		strCode = "E5KL";
-		break;
-	default:
-	}
-	return strCode;
-}
 //현재 시간을 기준으로 MealType계산
 function getMealTypeByTime() {
 	let oCurrentDateTime = new Date().getTime() + 9 * 60 * 1000 * 60; //UTC시간 + 9시간
@@ -496,15 +477,26 @@ function TopNArrays(aData,bDesc,sSortProp,iTop){
   //10.정렬
   if(bDesc){//내림차순일 경우
     aData.sort(function(a,b){
-      return a[sSortProp]>b[sSortProp] ? -1 : a[sSortProp]<b[sSortProp]?1:0;
+    	if(a[sSortProp] === 'undefined' || b[sSortProp] === 'undefined') return 1;
+    	return parseInt(a[sSortProp])>parseInt(b[sSortProp]) ? -1 : parseInt(a[sSortProp])<parseInt(b[sSortProp])?1:0;
     });
   } else {
     aData.sort(function(a,b){
-      return a[sSortProp]<b[sSortProp] ? -1 : a[sSortProp]>b[sSortProp]?1:0;
+    	if(a[sSortProp] === 'undefined' || b[sSortProp] === 'undefined') return 1;
+    	return parseInt(a[sSortProp])<parseInt(b[sSortProp]) ? -1 : parseInt(a[sSortProp])>parseInt(b[sSortProp])?1:0;
     });
   }
   //20. 상위 iTop개 리턴
   return aData.slice(0,iTop);
+};
+//scheduler.js의 parseYyyymmddToString
+// 서버 저장을 위해 YYYYMMDD를 Date 객체로 변환
+const parseYyyymmddToString = (str) => {
+    const y = str.substr(0, 4),
+        m = str.substr(4, 2) - 1,
+        d = str.substr(6, 2);
+    // 무슨 이유에서인지 서버 저장시 Local Timezone이 적용되지 않아 TimezoneOffset을 한번 더 적용해줌
+    return new Date(new Date(y, m, d).getTime() - new Date(y, m, d).getTimezoneOffset() * 60000);
 };
 
 module.exports = {
