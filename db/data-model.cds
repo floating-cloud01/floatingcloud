@@ -29,6 +29,24 @@ entity T_0010 {
       Calories   : String; //칼로리
       LikeIt     : Integer;//좋아요 숫자
 }
+/*메인 메뉴 */
+entity T_0011 {
+  key RecipeID   : String; //메인메뉴 ID
+      RecipeName : String; //메인메뉴 명
+      LikeIt     : Integer; //맛있어요 수
+      HateIt     : Integer; //별로에요 수
+}
+/*식단 리스트 - 수정 */
+entity T_0012 {
+  key ID         : String;
+      ShopID     : Association to M_0010; //식당ID           ex)잠실SDS
+      Corner     : String; //코너명                          코리안
+      Date       : DateTime; //날짜                          2018-11-09
+      MealType   : Association to M_0020; //식사 타입	     점심 
+      RecipeID   : Association to T_0011; //메인메뉴 ID                     
+      SideDish   : String; //추가 메뉴
+      Calories   : Integer; //칼로리
+}
 /*사용자 즐겨 찾기 식당-카카오 톡용  */
 entity T_0020 {
  key UserKey : String;//카카오톡 사용자 아이디(난수)
