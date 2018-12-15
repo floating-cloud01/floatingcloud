@@ -167,8 +167,8 @@ const scheduleForSavingMenu = () => {
 	// rule.tz = 'Asia/Seoul';
 	// console.log(rule);
 
-	saveAllMenu();
-	// const scheduledJob = schedule.scheduleJob(rule, saveAllMenu);
+	// saveAllMenu();
+	const scheduledJob = schedule.scheduleJob(rule, saveAllMenu);
 };
 
 module.exports = {
