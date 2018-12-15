@@ -2,7 +2,7 @@
 
 const schedule = require('node-schedule-tz');
 const welstory = require('../webhook/welstory');
-const requestClient = require('request');
+const rp = require('request-promise');
 
 // 식당별 Menu List를 전달받아 forEach를 통해 Item 별로 Post 수행
 // Post 결과를 Promise Array로 반환
@@ -24,17 +24,8 @@ const sendRequest = (menuList) => {
 				"MealType_MealType": menu.MealType,
 			}
 		};
-		promises.push(new Promise((resolve, reject) => {
-			// Error Handling이 제대로 된 건지 모르겠네요
-			requestClient(options, function (error, response, body) {
-				if (error) {
-					console.error(error);
-					throw {
-						error
-					};
-				}
-				resolve(body);
-			});
+		promises.push(rp(options).catch(error => {
+			console.error(error);
 		}));
 	});
 	// console.log(promises);
@@ -61,7 +52,7 @@ const getCurrentYyyymmdd = () => {
 
 // welstory.js의 getMenu() 메서드를 이용해 식당별 메뉴를 받아온 다음
 // 식당 별로 메뉴 저장을 비동기로 수행하고 성공 건수를 로그로 남김 
-const saveAllMenu = async() => {
+const saveAllMenu = async () => {
 	try {
 		const sDate = getCurrentYyyymmdd();
 		const convMenuList = [ // 우면1식당
@@ -76,74 +67,76 @@ const saveAllMenu = async() => {
 		// console.log(convMenuList);
 
 		// const convMenuList = [[{
-		//     ID: '2AAE59C',
-		//     Area_ID: 'J01',
-		//     Shop_ID: 'E59C',
-		//     Corner: '코리안1(B1)',
-		//     Date: '20181206',
-		//     MealType: 'L',
-		//     SideDish: '흑미밥,포기김치,두부찜&양념장,마늘종어묵볶음,미나리무생채',
-		//     MainTitle: '나가사끼부대찌개',
-		//     Calories: 1081
+		// 	ID: '2AAE59C',
+		// 	Area_ID: 'J01',
+		// 	Shop_ID: 'E59C',
+		// 	Corner: '코리안1(B1)',
+		// 	Date: '20181206',
+		// 	MealType: 'L',
+		// 	SideDish: '흑미밥,포기김치,두부찜&양념장,마늘종어묵볶음,미나리무생채',
+		// 	MainTitle: '나가사끼부대찌개',
+		// 	Calories: 1081
 		// }],
 		// [{
-		//     ID: '2AAE59D',
-		//     Area_ID: 'J01',
-		//     Shop_ID: 'E59D',
-		//     Corner: '코리안2(B1)',
-		//     Date: '20181206',
-		//     MealType: 'L',
-		//     SideDish: '흑미밥,콩나물국,포기김치,두부찜&양념장,미나리무생채',
-		//     MainTitle: '오삼불고기',
-		//     Calories: 790
+		// 	ID: '2AAE59D',
+		// 	Area_ID: 'J01',
+		// 	Shop_ID: 'E59D',
+		// 	Corner: '코리안2(B1)',
+		// 	Date: '20181206',
+		// 	MealType: 'L',
+		// 	SideDish: '흑미밥,콩나물국,포기김치,두부찜&양념장,미나리무생채',
+		// 	MainTitle: '오삼불고기',
+		// 	Calories: 790
 		// },
 		// {
-		//     ID: '1AAE59D',
-		//     Area_ID: 'J01',
-		//     Shop_ID: 'E59D',
-		//     Corner: '코리안2(B1)',
-		//     Date: '20181206',
-		//     MealType: 'M',
-		//     SideDish: '현미찹쌀밥,깍두기,햄전,김구이,부추적채겉절이,파인애플',
-		//     MainTitle: '사골떡국',
-		//     Calories: 942
+		// 	ID: '1AAE59D',
+		// 	Area_ID: 'J01',
+		// 	Shop_ID: 'E59D',
+		// 	Corner: '코리안2(B1)',
+		// 	Date: '20181206',
+		// 	MealType: 'M',
+		// 	SideDish: '현미찹쌀밥,깍두기,햄전,김구이,부추적채겉절이,파인애플',
+		// 	MainTitle: '사골떡국',
+		// 	Calories: 942
 		// },
 		// {
-		//     ID: '3AAE59D',
-		//     Area_ID: 'J01',
-		//     Shop_ID: 'E59D',
-		//     Corner: '코리안2(B1)',
-		//     Date: '20181206',
-		//     MealType: 'D',
-		//     SideDish: '혼합잡곡밥,부추장떡,연근조림,다시마숙회,포기김치',
-		//     MainTitle: '버섯만두찌개',
-		//     Calories: 978
+		// 	ID: '3AAE59D',
+		// 	Area_ID: 'J01',
+		// 	Shop_ID: 'E59D',
+		// 	Corner: '코리안2(B1)',
+		// 	Date: '20181206',
+		// 	MealType: 'D',
+		// 	SideDish: '혼합잡곡밥,부추장떡,연근조림,다시마숙회,포기김치',
+		// 	MainTitle: '버섯만두찌개',
+		// 	Calories: 978
 		// }]];
 
 		convMenuList.forEach(menuList => {
 			const promises = sendRequest(menuList);
 			Promise.all(promises)
 				.then(results => {
-					// console.log(results);
-					let shopName;
-					switch (results[0].d.ShopID_ShopID) {
-					case 'W01':
-						shopName = '우면1식당';
-						break;
-					case 'W02':
-						shopName = '우면2식당';
-						break;
-					case 'J01':
-						shopName = '잠실';
-						break;
-					case 'S01':
-						shopName = '서초생명';
-						break;
+					if (results.length !== 0) {
+						// console.log(results);
+						let shopName;
+						switch (results[0].d.ShopID_ShopID) {
+							case 'W01':
+								shopName = '우면1식당';
+								break;
+							case 'W02':
+								shopName = '우면2식당';
+								break;
+							case 'J01':
+								shopName = '잠실';
+								break;
+							case 'S01':
+								shopName = '서초생명';
+								break;
+						}
+						// parseInt('/Date(1544054400000)/'.match(/\d+/)[0], 10)
+						const resultMessage =
+							`[Scheduling] ${new Date(new Date().getTime() + 9 * 60 * 1000 * 60)} : ${shopName} 메뉴 ${results.length}건 저장`;
+						console.log(resultMessage);
 					}
-					// parseInt('/Date(1544054400000)/'.match(/\d+/)[0], 10)
-					const resultMessage =
-						`[Scheduling] ${new Date(new Date().getTime() + 9 * 60 * 1000 * 60)} : ${shopName} 메뉴 ${results.length}건 저장`;
-					console.log(resultMessage);
 				})
 				.catch(error => {
 					console.error(error);
@@ -174,8 +167,8 @@ const scheduleForSavingMenu = () => {
 	// rule.tz = 'Asia/Seoul';
 	// console.log(rule);
 
-	// saveAllMenu();
-	const scheduledJob = schedule.scheduleJob(rule, saveAllMenu);
+	saveAllMenu();
+	// const scheduledJob = schedule.scheduleJob(rule, saveAllMenu);
 };
 
 module.exports = {
