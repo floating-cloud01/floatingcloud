@@ -83,11 +83,12 @@
       <EntityType Name="DailyMenu">
         <Key>
           <PropertyRef Name="ID"/>
+          <PropertyRef Name="Date"/>
         </Key>
         <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="Date" Type="Edm.DateTimeOffset" Nullable="false"/>
         <NavigationProperty Name="ShopID" Relationship="CatalogService.DailyMenu_ShopID" FromRole="DailyMenu" ToRole="Cafeteria"/>
         <Property Name="Corner" Type="Edm.String"/>
-        <Property Name="Date" Type="Edm.DateTimeOffset"/>
         <NavigationProperty Name="MealType" Relationship="CatalogService.DailyMenu_MealType" FromRole="DailyMenu" ToRole="MealType"/>
         <NavigationProperty Name="RecipeID" Relationship="CatalogService.DailyMenu_RecipeID" FromRole="DailyMenu" ToRole="MainMenu"/>
         <Property Name="SideDish" Type="Edm.String"/>
