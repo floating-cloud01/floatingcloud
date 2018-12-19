@@ -39,9 +39,9 @@ entity T_0011 {
 /*식단 리스트 - 수정 */
 entity T_0012 {
   key ID         : String;
+  key Date       : DateTime; //날짜                          2018-11-09
       ShopID     : Association to M_0010; //식당ID           ex)잠실SDS
       Corner     : String; //코너명                          코리안
-      Date       : DateTime; //날짜                          2018-11-09
       MealType   : Association to M_0020; //식사 타입	     점심 
       RecipeID   : Association to T_0011; //메인메뉴 ID                     
       SideDish   : String; //추가 메뉴
