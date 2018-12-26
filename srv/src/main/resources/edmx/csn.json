@@ -207,28 +207,19 @@
       "kind": "entity",
       "source": "my.restaurant.T_0011",
       "elements": {
-        "RecipeID": {
-          "origin": "my.restaurant.T_0011..RecipeID",
+        "MenuName": {
+          "origin": "my.restaurant.T_0011..MenuName",
           "indexNo": 1,
           "value": {
-            "=": "T_0011.RecipeID"
+            "=": "T_0011.MenuName"
           },
           "key": true,
           "type": "cds.String",
-          "@cds.persistence.name": "RECIPEID"
-        },
-        "RecipeName": {
-          "origin": "my.restaurant.T_0011..RecipeName",
-          "indexNo": 2,
-          "value": {
-            "=": "T_0011.RecipeName"
-          },
-          "type": "cds.String",
-          "@cds.persistence.name": "RECIPENAME"
+          "@cds.persistence.name": "MENUNAME"
         },
         "LikeIt": {
           "origin": "my.restaurant.T_0011..LikeIt",
-          "indexNo": 3,
+          "indexNo": 2,
           "value": {
             "=": "T_0011.LikeIt"
           },
@@ -237,7 +228,7 @@
         },
         "HateIt": {
           "origin": "my.restaurant.T_0011..HateIt",
-          "indexNo": 4,
+          "indexNo": 3,
           "value": {
             "=": "T_0011.HateIt"
           },
@@ -300,9 +291,18 @@
           "type": "cds.String",
           "@cds.persistence.name": "CORNER"
         },
+        "CornerIdx": {
+          "origin": "my.restaurant.T_0012..CornerIdx",
+          "indexNo": 5,
+          "value": {
+            "=": "T_0012.CornerIdx"
+          },
+          "type": "cds.Integer",
+          "@cds.persistence.name": "CORNERIDX"
+        },
         "MealType": {
           "origin": "my.restaurant.T_0012..MealType",
-          "indexNo": 5,
+          "indexNo": 6,
           "value": {
             "=": "T_0012.MealType"
           },
@@ -320,29 +320,29 @@
           "redirected": true,
           "@cds.persistence.name": "MEALTYPE"
         },
-        "RecipeID": {
-          "origin": "my.restaurant.T_0012..RecipeID",
-          "indexNo": 6,
+        "Main": {
+          "origin": "my.restaurant.T_0012..Main",
+          "indexNo": 7,
           "value": {
-            "=": "T_0012.RecipeID"
+            "=": "T_0012.Main"
           },
           "type": "cds.Association",
           "target": "CatalogService.MainMenu",
           "foreignKeys": {
-            "RecipeID": {
-              "origin": "my.restaurant.T_0012..RecipeID.RecipeID",
+            "MenuName": {
+              "origin": "my.restaurant.T_0012..Main.MenuName",
               "indexNo": 1,
-              "path": "RecipeID",
-              "generatedFieldName": "RecipeID_RecipeID",
-              "@cds.persistence.name": "RECIPEID"
+              "path": "MenuName",
+              "generatedFieldName": "Main_MenuName",
+              "@cds.persistence.name": "MENUNAME"
             }
           },
           "redirected": true,
-          "@cds.persistence.name": "RECIPEID"
+          "@cds.persistence.name": "MAIN"
         },
         "SideDish": {
           "origin": "my.restaurant.T_0012..SideDish",
-          "indexNo": 7,
+          "indexNo": 8,
           "value": {
             "=": "T_0012.SideDish"
           },
@@ -351,7 +351,7 @@
         },
         "Calories": {
           "origin": "my.restaurant.T_0012..Calories",
-          "indexNo": 8,
+          "indexNo": 9,
           "value": {
             "=": "T_0012.Calories"
           },
@@ -376,14 +376,14 @@
           "@odata.foreignKey4": "MealType",
           "@cds.persistence.name": "MEALTYPE_MEALTYPE"
         },
-        "RecipeID_RecipeID": {
+        "Main_MenuName": {
           "type": "cds.String",
           "value": {
-            "=": "T_0012.RecipeID_RecipeID"
+            "=": "T_0012.Main_MenuName"
           },
-          "origin": "my.restaurant.T_0012..RecipeID_RecipeID",
-          "@odata.foreignKey4": "RecipeID",
-          "@cds.persistence.name": "RECIPEID_RECIPEID"
+          "origin": "my.restaurant.T_0012..Main_MenuName",
+          "@odata.foreignKey4": "Main",
+          "@cds.persistence.name": "MAIN_MENUNAME"
         }
       },
       "@cds.persistence.name": "CATALOGSERVICE_DAILYMENU"
@@ -617,24 +617,19 @@
     "my.restaurant.T_0011": {
       "kind": "entity",
       "elements": {
-        "RecipeID": {
+        "MenuName": {
           "key": true,
           "indexNo": 1,
           "type": "cds.String",
-          "@cds.persistence.name": "RECIPEID"
-        },
-        "RecipeName": {
-          "indexNo": 2,
-          "type": "cds.String",
-          "@cds.persistence.name": "RECIPENAME"
+          "@cds.persistence.name": "MENUNAME"
         },
         "LikeIt": {
-          "indexNo": 3,
+          "indexNo": 2,
           "type": "cds.Integer",
           "@cds.persistence.name": "LIKEIT"
         },
         "HateIt": {
-          "indexNo": 4,
+          "indexNo": 3,
           "type": "cds.Integer",
           "@cds.persistence.name": "HATEIT"
         }
@@ -675,8 +670,13 @@
           "type": "cds.String",
           "@cds.persistence.name": "CORNER"
         },
-        "MealType": {
+        "CornerIdx": {
           "indexNo": 5,
+          "type": "cds.Integer",
+          "@cds.persistence.name": "CORNERIDX"
+        },
+        "MealType": {
+          "indexNo": 6,
           "type": "cds.Association",
           "target": "my.restaurant.M_0020",
           "foreignKeys": {
@@ -689,27 +689,27 @@
           },
           "@cds.persistence.name": "MEALTYPE"
         },
-        "RecipeID": {
-          "indexNo": 6,
+        "Main": {
+          "indexNo": 7,
           "type": "cds.Association",
           "target": "my.restaurant.T_0011",
           "foreignKeys": {
-            "RecipeID": {
-              "path": "RecipeID",
+            "MenuName": {
+              "path": "MenuName",
               "indexNo": 1,
-              "generatedFieldName": "RecipeID_RecipeID",
-              "@cds.persistence.name": "RECIPEID"
+              "generatedFieldName": "Main_MenuName",
+              "@cds.persistence.name": "MENUNAME"
             }
           },
-          "@cds.persistence.name": "RECIPEID"
+          "@cds.persistence.name": "MAIN"
         },
         "SideDish": {
-          "indexNo": 7,
+          "indexNo": 8,
           "type": "cds.String",
           "@cds.persistence.name": "SIDEDISH"
         },
         "Calories": {
-          "indexNo": 8,
+          "indexNo": 9,
           "type": "cds.Integer",
           "@cds.persistence.name": "CALORIES"
         },
@@ -723,10 +723,10 @@
           "@odata.foreignKey4": "MealType",
           "@cds.persistence.name": "MEALTYPE_MEALTYPE"
         },
-        "RecipeID_RecipeID": {
+        "Main_MenuName": {
           "type": "cds.String",
-          "@odata.foreignKey4": "RecipeID",
-          "@cds.persistence.name": "RECIPEID_RECIPEID"
+          "@odata.foreignKey4": "Main",
+          "@cds.persistence.name": "MAIN_MENUNAME"
         }
       },
       "@cds.persistence.name": "MY_RESTAURANT_T_0012"
