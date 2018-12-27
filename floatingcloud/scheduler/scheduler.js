@@ -8,6 +8,7 @@ const makeRequestOption = (method, entitySet, body = {}) => {
 	const options = {
 		method,
 		uri: `https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/${entitySet}`,
+		// uri: `https://s0012785615trial-rybczinski-dev-mycorpdining-srv.cfapps.eu10.hana.ondemand.com/odata/v2/CatalogService/${entitySet}`,
 		json: true,
 		body
 	}
@@ -153,7 +154,7 @@ const saveAllMenu = async () => {
 		// 		Calories: 978
 		// 	}]];
 
-		// sendMainRequest(convMenuList);
+		sendMainRequest(convMenuList);
 
 		convMenuList.forEach(menuList => {
 			const Dailypromises = sendDailyRequest(menuList);
