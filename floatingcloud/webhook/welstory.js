@@ -327,11 +327,11 @@ function getMenu(date, hallNo) {
 		});
 	});
 }
-//Menu가져와서 Response에 추가
-function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction,agent) {
+//DailyMenu가져와서 Response에 추가
+function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction, agent) {
 	return new Promise((resolve, reject) => {
-		var sUrl = "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/Menu?$filter=ShopID_ShopID eq '" +
-		     	   sCafe + "' and MealType_MealType eq '" + sMealType + "' and Date eq datetimeoffset'" + parseYyyymmddToString(sDate).toISOString() + "'";
+		var sUrl = "https://charles-erp-dev-mycorpdining-srv.cfapps.ap10.hana.ondemand.com/odata/v2/CatalogService/DailyMenu?$filter=ShopID_ShopID eq '" +
+		     	   sCafe + "' and MealType_MealType eq '" + sMealType + "' and Date eq datetimeoffset'" + parseYyyymmddToString(sDate).toISOString() + "'&$orderby=CornerIdx";
 		var options = {
 			method: "GET",
 			uri: sUrl,
@@ -368,7 +368,7 @@ function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuActio
 			    		break;
 			    	case 'SPECIAL':
 			    		aFilteredRetunValue = returnValue.filter(function(value){
-			    			return value.MainTitle.includes("선택식");
+			    			return value.Main_MenuName.includes("선택식");
 			    		})
 			    		break;
 			        default:
@@ -379,7 +379,7 @@ function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuActio
 				for (var i = 0; i < aFilteredRetunValue.length; i++) {
 					iCal = aFilteredRetunValue[i].Calories?aFilteredRetunValue[i].Calories:"미제공"
 					sResponse += i+1 + "." + aFilteredRetunValue[i].Corner + "→" + 
-											aFilteredRetunValue[i].MainTitle + "(" + 
+											aFilteredRetunValue[i].Main_MenuName + "(" + 
 											 iCal +"Kcal)" + 
 											"\n" ;//+ aFilteredRetunValue[i].SideDish + "\n";
 				}
