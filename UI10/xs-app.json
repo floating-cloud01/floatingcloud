@@ -1,0 +1,20 @@
+{
+  "welcomeFile": "/UI10/test/flpSandbox.html",
+  "authenticationMethod": "route",
+  "logout": {
+    "logoutEndpoint": "/do/logout"
+  },
+  "routes": [
+    {
+      "source": "/odata/v2",
+      "authenticationType": "none",
+      "destination": "srv_api",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/UI10/(.*)$",
+      "target": "$1",
+      "localDir": "webapp"
+    }
+  ]
+}

@@ -35,8 +35,35 @@ modules:
        properties:
           url: ${default-url}
 
+
+  - name: UI10
+    type: html5
+    path: UI10
+    parameters:
+       disk-quota: 256M
+       memory: 256M
+    build-parameters:
+       builder: grunt
+    requires:
+     - name: srv_api
+       group: destinations
+       properties:
+          forwardAuthToken: true
+          strictSSL: false
+          name: srv_api
+          url: ~{url}
+     - name: uaa_MyCorpDining
+
 resources:
   - name: MyCorpDining-hdi-container
     properties:
       hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
+
+  - name: uaa_MyCorpDining
+    parameters:
+       path: ./xs-security.json
+       service-plan: application
+       service: xsuaa
+    type: org.cloudfoundry.managed-service
+

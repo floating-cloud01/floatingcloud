@@ -6,6 +6,7 @@
 
 const express = require('express');
 const kakao = require('./kakao/plusfriend');
+const newKakao = require('./kakao/newPlusfriend');
 // const restServiceSales = require('./rest/restServiceSales');
 const welstory = require('./webhook/welstory');
 const scheduler = require('./scheduler/scheduler');
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 // app.use('/webhook', webhook);
 //카카오 플러스 친구
 app.use('/kakao', kakao);
+app.use('/newKakao',newKakao);
 app.use('/webhook', welstory.webhook);
 // app.use('/welstory',restServiceSales);
 //20.index.html호출용 서비스 생성
