@@ -1,7 +1,7 @@
 {
 	"_version": "1.8.0",
 	"sap.app": {
-		"id": "UI10",
+		"id": "fioriui",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
@@ -76,13 +76,13 @@
 				"type": "sap.ui.model.resource.ResourceModel",
 				"uri": "i18n/i18n.properties"
 			},
-			"i18n|sap.suite.ui.generic.template.ListReport|Menu": {
+			"i18n|sap.suite.ui.generic.template.ListReport|DailyMenu": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"uri": "i18n/ListReport/Menu/i18n.properties"
+				"uri": "i18n/ListReport/DailyMenu/i18n.properties"
 			},
-			"i18n|sap.suite.ui.generic.template.ObjectPage|Menu": {
+			"i18n|sap.suite.ui.generic.template.ObjectPage|DailyMenu": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"uri": "i18n/ObjectPage/Menu/i18n.properties"
+				"uri": "i18n/ObjectPage/DailyMenu/i18n.properties"
 			},
 			"": {
 				"dataSource": "mainService",
@@ -117,8 +117,8 @@
 			}
 		},
 		"pages": {
-			"ListReport|Menu": {
-				"entitySet": "Menu",
+			"ListReport|DailyMenu": {
+				"entitySet": "DailyMenu",
 				"component": {
 					"name": "sap.suite.ui.generic.template.ListReport",
 					"list": true,
@@ -127,8 +127,8 @@
 					}
 				},
 				"pages": {
-					"ObjectPage|Menu": {
-						"entitySet": "Menu",
+					"ObjectPage|DailyMenu": {
+						"entitySet": "DailyMenu",
 						"component": {
 							"name": "sap.suite.ui.generic.template.ObjectPage"
 						}

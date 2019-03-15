@@ -1,11 +1,10 @@
 <!DOCTYPE HTML>
 <html>
-<!-- Copyright (c) 2015 SAP AG, All Rights Reserved -->
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>UI10</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>SAMSUNG Restaurant</title>
 
 	<!-- Bootstrap the unified shell in sandbox mode for standalone usage.
 
@@ -29,17 +28,16 @@
 				fiori2: {
 					componentData: {
 						config: {
-							rootIntent: "masterDetail-display",
 							search: "hidden"
 						}
 					}
 				}
 			},
 			applications: {
-				"masterDetail-display": {
-					"additionalInformation": "SAPUI5.Component=UI10",
-					"applicationType": "URL",
-					"url": "../"
+				"DailyMenu-display": {
+					additionalInformation: "SAPUI5.Component=fioriui",
+					applicationType: "URL",
+					url: "../"
 				}
 			}
 		};
@@ -48,29 +46,17 @@
 	<script src="https://sapui5.hana.ondemand.com/test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
 
 	<!-- Bootstrap the UI5 core library -->
-	<script id="sap-ui-bootstrap"
-			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m, sap.ushell"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"UI10": "../", "sap.ui.demo.masterdetail.service": "./service/"}'
-			data-sap-ui-frameOptions='allow'> // NON-SECURE setting for testing environment
+	<script id="sap-ui-bootstrap" src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js" data-sap-ui-libs="sap.m, sap.ushell, sap.collaboration" data-sap-ui-theme="sap_belize" data-sap-ui-compatversion="edge" data-sap-ui-resourceroots="{&quot;fioriui&quot;: &quot;../&quot;}" data-sap-ui-frameoptions="allow"> 	// NON-SECURE setting for testing environment
 	</script>
+	<script src="../../changes_preview.js"></script>
+
+	<script>(function(){document.addEventListener("load",function(e){if("OpaFrame"===e.target.id){var t=document.getElementById("OpaFrame").contentWindow.document,n=t.createElement("script");n.type="text/javascript",n.innerHTML="sap.ui.getCore().loadLibrary('sap.ui.fl'); jQuery.getScript('../../changes_preview.js')",t.head.appendChild(n)}},!0)})()</script>
+
 
 	<script type="text/javascript">
 		sap.ui.getCore().attachInit(function() {
-	        //Fake LREP
-	        jQuery.sap.require("sap.ui.fl.FakeLrepConnector");
-	        sap.ui.fl.FakeLrepConnector.enableFakeConnector("fakeLRep.json");
-			sap.ui.require([
-				"UI10/localService/mockserver"
-			], function (server) {
-				// set up test service for local testing
-				server.init();
-
-				// initialize the ushell sandbox component
-				sap.ushell.Container.createRenderer().placeAt("content");
-			});
+			// initialize the ushell sandbox component
+			sap.ushell.Container.createRenderer().placeAt("content");
 		});
 	</script>
 

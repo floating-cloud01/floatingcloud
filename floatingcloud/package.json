@@ -5,7 +5,7 @@
     "body-parser": "latest",
     "cheerio": "1.0.0-rc.2",
     "cors": "2.8.4",
-    "dialogflow-fulfillment": "0.4.1",
+    "dialogflow-fulfillment": "latest",
     "express": "4.16.4",
     "fs": "0.0.1-security",
     "iconv-lite": "0.4.24",

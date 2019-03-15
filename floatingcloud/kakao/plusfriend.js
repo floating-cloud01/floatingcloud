@@ -1,6 +1,6 @@
 'use strict';
 var apiai = require("apiai");
-const express = require('express');
+var express = require('express');
 var router = express.Router();
 
 //10. dialogflow의 프로젝트에 있는 client용 키

@@ -36,9 +36,12 @@ modules:
           url: ${default-url}
 
 
-  - name: UI10
+  
+
+
+  - name: fioriui
     type: html5
-    path: UI10
+    path: fioriui
     parameters:
        disk-quota: 256M
        memory: 256M

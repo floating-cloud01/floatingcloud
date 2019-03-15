@@ -28,17 +28,17 @@
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">
-			<Annotations Target="CatalogService.Menu">
+			<Annotations Target="CatalogService.DailyMenu">
 				<Annotation Term="UI.LineItem">
 					<Collection>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="Corner"/>
+							<PropertyValue Property="Value" Path="ShopID_ShopID"/>
 						</Record>
 						<Record Type="UI.DataField">
 							<PropertyValue Property="Value" Path="Date"/>
 						</Record>
 						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="MainTitle"/>
+							<PropertyValue Property="Value" Path="Corner"/>
 						</Record>
 						<Record Type="UI.DataField">
 							<PropertyValue Property="Value" Path="SideDish"/>
@@ -46,19 +46,17 @@
 						<Record Type="UI.DataField">
 							<PropertyValue Property="Value" Path="Calories"/>
 						</Record>
-						<Record Type="UI.DataField">
-							<PropertyValue Property="Value" Path="LikeIt"/>
-						</Record>
 					</Collection>
 				</Annotation>
 				<Annotation Term="UI.SelectionFields">
 					<Collection>
-						<PropertyPath>Corner</PropertyPath>
 						<PropertyPath>Date</PropertyPath>
-						<PropertyPath>MainTitle</PropertyPath>
-						<PropertyPath>SideDish</PropertyPath>
+						<PropertyPath>ShopID_ShopID</PropertyPath>
 					</Collection>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="CatalogService.DailyMenu/Date">
+				<Annotation Term="Common.IsCalendarDate"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

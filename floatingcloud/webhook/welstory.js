@@ -20,14 +20,16 @@ process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 var webhook = express.Router();
 
 webhook.post('/', function (request, response) {
-	const agent = new WebhookClient({
+	var agent = new WebhookClient({
 		request,
 		response
 	});
+
 	//Session id저장
 	let aSession = agent.session.split('/');//request.body.session.split('/');
 	let sKakaoSessionID = aSession[aSession.length - 1] || 'dummy';
-
+    console.log("sKakaoSessionID");
+    console.log(sKakaoSessionID);
 	/**
 	 * INTENT별 기능 정의
 	 */
@@ -75,13 +77,17 @@ webhook.post('/', function (request, response) {
 			if (!sCafe) {
 				getCafe(sKakaoSessionID).then(function (result) {
 					sCafe = result;
-					let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
+					let sResponseTitle = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
+					let sResponse = sResponseTitle;
+					// agent.add(sResponseTitle);
 					excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction,agent).then(function (result) {
 						resolve(result);
 					});
 				});
 			} else {
-				let sResponse = sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
+				let sResponseTitle =  sDateText + '의 ' + getMealTypeName(sMealType) + '메뉴 정보(' + getCafeName(sCafe) + ')\n';
+				let sResponse  = sResponseTitle;
+				// agent.add(sResponseTitle);
 				excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuAction, agent).then(function (result) {
 					resolve(result);
 				});
@@ -122,6 +128,10 @@ webhook.post('/', function (request, response) {
 		case 'Create':
 			if(!sCafe){
 				agent.add("식당 이름을 말씀해주세요(잠실,우면1식당,우면2식당,서초)");
+				agent.add(new Suggestion('잠실'));
+				agent.add(new Suggestion('우면1식당'));
+				agent.add(new Suggestion('우면2식당'));
+				agent.add(new Suggestion('서초'));
 				return;
 			}
 			var options = {
@@ -175,12 +185,14 @@ webhook.post('/', function (request, response) {
 				break;
 			case 'Display':
 				sReturnMessage = '등록되어 있는 식당은 ' + getCafeName(result.d.ShopID_ShopID) + ' 입니다.';
+				agent.add(new Suggestion('즐겨찾기 삭제'));
 				break;
 			default:
 			}
 			agent.add(sReturnMessage);
 			agent.add(new Suggestion('오늘 점심 메뉴'));
 			agent.add(new Suggestion('추천 메뉴'));
+			agent.add(new Suggestion('처음으로'));
 		}).catch(function (err) {
 			switch (sAction) {
 			  case 'Create':
@@ -191,12 +203,13 @@ webhook.post('/', function (request, response) {
 					break;
 			case 'Display':
 				    agent.add("등록된 즐겨찾기가 없습니다");
+				    agent.add(new Suggestion('즐겨찾기 등록'));
 					break;
 			default:
 			}
-			agent.add(new Suggestion('오늘 점심 메뉴'));
+			agent.add(new Suggestion('오늘 메뉴'));
 			agent.add(new Suggestion('추천 메뉴'));
-			
+			agent.add(new Suggestion('처음으로'));
 		});
 
 	}
@@ -337,6 +350,7 @@ function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuActio
 			uri: sUrl,
 			json: true
 		};
+		
 		requestClient(options, function (error, response, body) {
 			if (error) {
 				console.log("error!");
@@ -375,26 +389,57 @@ function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuActio
 			            aFilteredRetunValue = returnValue;
 			    }
 			    //결과값 리턴
-				let iCal = 0;
+			    let iCal = 0;
 				for (var i = 0; i < aFilteredRetunValue.length; i++) {
-					iCal = aFilteredRetunValue[i].Calories?aFilteredRetunValue[i].Calories:"미제공"
-					sResponse += i+1 + "." + aFilteredRetunValue[i].Corner + "→" + 
-											aFilteredRetunValue[i].Main_MenuName + "(" + 
-											 iCal +"Kcal)" + 
-											"\n" ;//+ aFilteredRetunValue[i].SideDish + "\n";
-				}
-				if (aFilteredRetunValue.length > 0) {
-					agent.add(sResponse);
-					agent.add(new Suggestion('내일은?'));
-					if (sMealType === 'L') {
-						agent.add(new Suggestion('저녁은?'));
-					}
+						iCal = aFilteredRetunValue[i].Calories?aFilteredRetunValue[i].Calories:"미제공"
+						sResponse += i+1 + "." + aFilteredRetunValue[i].Corner + "→" + 
+												aFilteredRetunValue[i].Main_MenuName + "(" + 
+												 iCal +"Kcal)" + 
+												"\n" ;//+ aFilteredRetunValue[i].SideDish + "\n";
+					};
+				agent.add(sResponse);
+			  //  var aItems = [];
+			  //  console.log(JSON.stringify(aFilteredRetunValue));
+			  //  if(aFilteredRetunValue.length>0){
+					// let iCal = 0;
+					// for (var i = 0; i < aFilteredRetunValue.length; i++) {
+					// 	// iCal = aFilteredRetunValue[i].Calories?aFilteredRetunValue[i].Calories:"미제공"
+					// 	// sResponse += i+1 + "." + aFilteredRetunValue[i].Corner + "→" + 
+					// 	// 						aFilteredRetunValue[i].Main_MenuName + "(" + 
+					// 	// 						 iCal +"Kcal)" + 
+					// 	// 						"\n" ;//+ aFilteredRetunValue[i].SideDish + "\n";
+					// 	// agent.add(new Card({
+					// 	//         title: aFilteredRetunValue[i].Corner,
+						       
+					// 	//         text: aFilteredRetunValue[i].Main_MenuName + "(" +  iCal +"Kcal)",
+					// 	//         buttonText: 'This is a button',
+					// 	//         buttonUrl: "http://www.naver.com"
+					// 	//       })
+					// 	//     );
+					//     console.log("##aFilteredRetunValue[i]");
+					//     console.log(aFilteredRetunValue[i])
+					// 	aItems.push({title:aFilteredRetunValue[i].Corner,description:aFilteredRetunValue[i].Main_MenuName + "(" + iCal +"Kcal)"});
+					// }
+				// agent.add("TITLE");
+				// agent.add(sResponse);
+					// agent.kakao = {};
+					// agent.kakao.items = aItems;
+					//QuickReply
+					agent.add(new Suggestion('처음으로'));
+					agent.add(new Suggestion('내일 아침'));
+					agent.add(new Suggestion('내일 점심'));
+					agent.add(new Suggestion('내일 저녁'));
+					// if (sMealType === 'L') {
+					// 	agent.add(new Suggestion('저녁은?'));
+					// }
+					agent.add(new Suggestion('추천 메뉴'));
+					agent.add(new Suggestion('저칼로리 메뉴'));
 					
 				} else {
 					agent.add(sDateText + "에는 메뉴가 없습니다.");
 				}
 				resolve(agent);
-			}
+			
 		});
 	});
 }

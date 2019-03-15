@@ -1,6 +1,6 @@
 {
-  "welcomeFile": "/UI10/test/flpSandbox.html",
-  "authenticationMethod": "route",
+  "welcomeFile": "/fioriui/test/flpSandbox.html",
+  "authenticationMethod": "none",
   "logout": {
     "logoutEndpoint": "/do/logout"
   },
@@ -12,7 +12,7 @@
       "csrfProtection": false
     },
     {
-      "source": "^/UI10/(.*)$",
+      "source": "^/fioriui/(.*)$",
       "target": "$1",
       "localDir": "webapp"
     }

@@ -27,7 +27,7 @@
 					<End Role="DailyMenu" EntitySet="DailyMenu"/>
 					<End Role="MealType" EntitySet="MealType"/>
 				</AssociationSet>
-				<AssociationSet Name="DailyMenu_RecipeID" Association="CatalogService.DailyMenu_RecipeID">
+				<AssociationSet Name="DailyMenu_Main" Association="CatalogService.DailyMenu_Main">
 					<End Role="DailyMenu" EntitySet="DailyMenu"/>
 					<End Role="MainMenu" EntitySet="MainMenu"/>
 				</AssociationSet>
@@ -74,10 +74,9 @@
 			</EntityType>
 			<EntityType Name="MainMenu">
 				<Key>
-					<PropertyRef Name="RecipeID"/>
+					<PropertyRef Name="MenuName"/>
 				</Key>
-				<Property Name="RecipeID" Type="Edm.String" Nullable="false"/>
-				<Property Name="RecipeName" Type="Edm.String"/>
+				<Property Name="MenuName" Type="Edm.String" Nullable="false"/>
 				<Property Name="LikeIt" Type="Edm.Int32"/>
 				<Property Name="HateIt" Type="Edm.Int32"/>
 			</EntityType>
@@ -90,13 +89,14 @@
 				<Property Name="Date" Type="Edm.DateTimeOffset" Nullable="false"/>
 				<NavigationProperty Name="ShopID" Relationship="CatalogService.DailyMenu_ShopID" FromRole="DailyMenu" ToRole="Cafeteria"/>
 				<Property Name="Corner" Type="Edm.String"/>
+				<Property Name="CornerIdx" Type="Edm.Int32"/>
 				<NavigationProperty Name="MealType" Relationship="CatalogService.DailyMenu_MealType" FromRole="DailyMenu" ToRole="MealType"/>
-				<NavigationProperty Name="RecipeID" Relationship="CatalogService.DailyMenu_RecipeID" FromRole="DailyMenu" ToRole="MainMenu"/>
+				<NavigationProperty Name="Main" Relationship="CatalogService.DailyMenu_Main" FromRole="DailyMenu" ToRole="MainMenu"/>
 				<Property Name="SideDish" Type="Edm.String"/>
 				<Property Name="Calories" Type="Edm.Int32"/>
 				<Property Name="ShopID_ShopID" Type="Edm.String"/>
 				<Property Name="MealType_MealType" Type="Edm.String"/>
-				<Property Name="RecipeID_RecipeID" Type="Edm.String"/>
+				<Property Name="Main_MenuName" Type="Edm.String"/>
 			</EntityType>
 			<EntityType Name="BookmarkedRestaurant">
 				<Key>
@@ -165,15 +165,15 @@
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
-			<Association Name="DailyMenu_RecipeID">
+			<Association Name="DailyMenu_Main">
 				<End Role="DailyMenu" Type="CatalogService.DailyMenu" Multiplicity="*"/>
 				<End Role="MainMenu" Type="CatalogService.MainMenu" Multiplicity="0..1"/>
 				<ReferentialConstraint>
 					<Principal Role="MainMenu">
-						<PropertyRef Name="RecipeID"/>
+						<PropertyRef Name="MenuName"/>
 					</Principal>
 					<Dependent Role="DailyMenu">
-						<PropertyRef Name="RecipeID_RecipeID"/>
+						<PropertyRef Name="Main_MenuName"/>
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
