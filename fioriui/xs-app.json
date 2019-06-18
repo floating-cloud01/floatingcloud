@@ -1,5 +1,5 @@
 {
-  "welcomeFile": "/fioriui/test/flpSandbox.html",
+  "welcomeFile": "/fioriui/index.html",
   "authenticationMethod": "none",
   "logout": {
     "logoutEndpoint": "/do/logout"

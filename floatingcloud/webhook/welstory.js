@@ -43,6 +43,9 @@ webhook.post('/', function (request, response) {
 			let sDateText = "";
 			let sMealType = agent.parameters.MealType;
 			let oDateUTC = "";
+			//agent
+			console.log("Agent");
+			console.log(agent.parameters);
 			//추천,랜덤, 저칼로리, 고칼로리 식단 추천.추천/랜덤=1개, 저칼로리/고칼로리=상위3개
 			let sMenuAction = agent.parameters.MenuAction;//RECOMMEND,RANDOM,LOWCALORIES,HIGHCALORIES
 			//날짜가 없으면 오늘 날짜로
@@ -50,6 +53,7 @@ webhook.post('/', function (request, response) {
 				// oDate = new Date().toISOString().slice(0,10).replace(/-/g,"");
 				//서버가 시드니라고 가정하고
 				oDateUTC = new Date().getTime() + 9 * 60 * 1000 * 60; //UTC시간 + 9시간
+				
 				oDate = new Date(oDateUTC).toISOString();
 				console.log("===========서버 계산 시간");
 				console.log(oDate);
@@ -59,7 +63,10 @@ webhook.post('/', function (request, response) {
 					oDate = agent.parameters.Date.date_time;
 					console.log("===========서버 계산 시간date_time");
 					console.log(oDate);
-				} else {
+				} else if(agent.parameters.Date){
+					oDate = agent.parameters.Date;
+				}
+				else {
 					oDate = agent.parameters.Date.startDateTime;
 					console.log("===========서버 계산 시간startDateTime");
 					console.log(oDate);
@@ -69,7 +76,7 @@ webhook.post('/', function (request, response) {
 			if(!sMealType){
 			  sMealType = getMealTypeByTime();
 			}
-
+           
 			sDate = oDate.split('T')[0].split('-')[0] + oDate.split('T')[0].split('-')[1] + oDate.split('T')[0].split('-')[2];
 			sDateText = oDate.split('T')[0].split('-')[0] + '년 ' + oDate.split('T')[0].split('-')[1] + '월 ' + oDate.split('T')[0].split('-')[2] +
 				'일';
@@ -426,6 +433,7 @@ function excuteGetMenu(sCafe, sDate, sMealType, sResponse, sDateText, sMenuActio
 					// agent.kakao.items = aItems;
 					//QuickReply
 					agent.add(new Suggestion('처음으로'));
+					agent.add(new Suggestion('오늘 메뉴'));
 					agent.add(new Suggestion('내일 아침'));
 					agent.add(new Suggestion('내일 점심'));
 					agent.add(new Suggestion('내일 저녁'));

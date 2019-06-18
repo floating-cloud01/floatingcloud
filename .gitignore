@@ -11,3 +11,4 @@ gen
 *.mtar
 
 .DS_Store
+/mta_archives/

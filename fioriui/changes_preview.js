@@ -1,5 +1,6 @@
 //This file used only for loading the changes in the webide preview and not required to be checked in.
 //Load the fake lrep connector
+sap.ui.getCore().loadLibraries(["sap/ui/fl"]);
 sap.ui.require(["sap/ui/fl/FakeLrepConnector"], function (FakeLrepConnector) {
 	jQuery.extend(FakeLrepConnector.prototype, {
 		create: function (oChange) {

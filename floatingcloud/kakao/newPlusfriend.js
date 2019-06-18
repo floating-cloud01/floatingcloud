@@ -159,7 +159,7 @@ function buildKakaoResponse(res) {
 					"buttons": [{
 						"label": "모바일페이지(beta)",
 						"action": "webLink",
-						"webLinkUrl": "https://charles-erp-dev-fioriui.cfapps.ap10.hana.ondemand.com/fioriui/test/flpSandbox.html#DailyMenu-display"
+						"webLinkUrl": "https://charles-erp-dev-fioriui.cfapps.ap10.hana.ondemand.com/fioriui/webapp/index.html"
 					}]
 				}
 			}]
