@@ -13,7 +13,7 @@
     "node-uuid": "latest",
     "request": "2.88.0",
     "request-promise": "^4.2.2",
-    "ws": "^2.2.1"
+    "ws": "^7.2.0"
   },
   "description": "외부 연계용 서비스(node.js)",
   "devDependencies": {
